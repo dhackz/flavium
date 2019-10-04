@@ -3,6 +3,8 @@ version: '3'
 services:
   plex:
     image: plexinc/pms-docker
+    hostname: PlexServer
+    restart: always
     ports:
       - 32400:32400
       - 3005:3005
@@ -17,6 +19,7 @@ services:
       PLEX_CLAIM: "${PLEX_CLAIM}"
       TZ: "${TZ}"
       ADVERTISE_IP: "${ADVERTISE_IP}"
+      ALLOWED_NETWORKS: "${ALLOWED_NETWORKS}"
     volumes:
       - ./data:/data
       - ./transcode:/transcode
