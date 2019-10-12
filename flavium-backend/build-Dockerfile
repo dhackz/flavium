@@ -1,3 +1,1 @@
-FROM golang:1.13.1-buster
-
-ENTRYPOINT ["go"]
+FROM alpine:3.10
