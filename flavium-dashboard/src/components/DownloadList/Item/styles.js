@@ -17,23 +17,23 @@ export const ItemStyle = styled.li`
 `;
 
 export const ProgressBar = styled.div`
-margin-bottom: 10px;
-margin-left: 10px;
-margin-right: 10px;
-margin-top: 5px;
+    margin-bottom: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 5px;
 
-background-color: black;
-border-radius: 13px;
-/* (height of inner div) / 2 + padding */
-padding: 4px;
+    background-color: black;
+    border-radius: 13px;
+    /* (height of inner div) / 2 + padding */
+    padding: 4px;
 
-div{
-    background-color: orange;
-    width: ${props => props.percent}%;
-    /* Adjust with JavaScript */
-    height: 12px;
-    border-radius: 10px;
-}
+    div{
+        background-color: orange;
+        width: ${props => props.percent}%;
+        /* Adjust with JavaScript */
+        height: 12px;
+        border-radius: 10px;
+    }
 `;
 
 export const Name = styled.div`

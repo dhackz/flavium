@@ -11,9 +11,9 @@ export const ListStyle = styled.div`
 `;
 
 export const Header = styled.div`
-text-align: right;
-width: 100%;
-background-image: linear-gradient(to right, #404a4a, #43413c);
+    text-align: right;
+    width: 100%;
+    background-image: linear-gradient(to right, #404a4a, #43413c);
 `;
 
 export const LargeText = styled.div`
@@ -24,9 +24,8 @@ export const LargeText = styled.div`
 `;
 
 export const Status = styled.p`
-
-margin: 0;
-font-size: 1rem; font-weight: 400;
+    margin: 0;
+    font-size: 1rem; font-weight: 400;
 `;
 
 export const Toggle = styled.div`
