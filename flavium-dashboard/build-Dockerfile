@@ -1,0 +1,16 @@
+FROM alpine:3.10
+
+RUN apk add --update \
+    npm \
+    git
+
+RUN npm install \
+    react \
+    react-scripts \
+    react-dom \
+    styled-components \
+    parse-torrent \
+    typescript \
+    csstools/normalize.css
+
+ENTRYPOINT ["/usr/bin/npm"]

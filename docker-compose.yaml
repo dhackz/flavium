@@ -28,6 +28,8 @@ services:
     build:
       context: flavium-dashboard
     image: flavium/dashboard
+    ports:
+      - 80:80
   flavium-backend:
     build:
       context: flavium-backend
