@@ -1,8 +1,20 @@
 syntax = 'proto3';
 package torrents;
+
+import "google/api/annotations.proto";
+
 service Torrent {
-	rpc AddTorrent (AddTorrentRequest) returns (AddTorrentResponse) {}
-	rpc GetStatus (GetStatusRequest) returns (GetStatusResponse) {}
+	rpc AddTorrent (AddTorrentRequest) returns (AddTorrentResponse) {
+       option (google.api.http) = {
+           post: "/v1/torrent"
+           body: "*"
+       };
+    }
+	rpc GetStatus (GetStatusRequest) returns (GetStatusResponse) {
+        option (google.api.http) = {
+            get: "/v1/torrent"
+        };
+    }
 }
 
 message AddTorrentRequest{

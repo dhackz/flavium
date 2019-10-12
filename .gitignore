@@ -4,3 +4,4 @@ transcode
 config
 .idea
 *.pb.go
+*.pb.*
