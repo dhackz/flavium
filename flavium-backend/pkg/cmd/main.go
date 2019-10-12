@@ -134,8 +134,6 @@ func extractUser(state string, code string) ([]byte, error) {
 }
 
 func main(){
-
-
 	go func() {
 		lis, err := net.Listen("tcp", ":"+grpcPort)
 		if err != nil {
@@ -156,5 +154,4 @@ func main(){
 	if err := Run(":8080"); err != nil {
 		glog.Fatal(err)
 	}
-
 }
