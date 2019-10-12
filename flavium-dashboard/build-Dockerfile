@@ -1,16 +1,34 @@
 FROM alpine:3.10
 
+ARG UNAME=testuser
+ARG UID=1000
+ARG GID=1000
+
 RUN apk add --update \
     npm \
     git
 
-RUN npm install -g\
-    react \
-    react-scripts \
-    react-dom \
-    styled-components \
-    parse-torrent \
-    typescript \
-    csstools/normalize.css
+RUN addgroup -g $GID $UNAME
+RUN adduser \
+    -h /home/$UNAME \
+    -s /bin/sh \
+    -G $UNAME \
+    -D \
+    -u $UID \
+    $UNAME
 
-ENTRYPOINT ["/usr/bin/npm"]
+RUN echo "\"NODE_PATH=\$NODE_PATH:/home/$UNAME/node-packages\"" >> /etc/profile
+USER $UNAME
+
+RUN mkdir -p /home/$UNAME/node-packages
+WORKDIR /home/$UNAME/node-packages
+RUN npm install \
+        react \
+        react-scripts \
+        react-dom \
+        styled-components \
+        parse-torrent \
+        typescript \
+        csstools/normalize.css
+
+WORKDIR /home/$UNAME/
