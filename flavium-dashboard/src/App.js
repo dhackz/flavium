@@ -8,6 +8,7 @@ const GlobalStyles = createGlobalStyle`
   body {
     @import url('https://fonts.googleapis.com/css?family=Raleway');
     font-family: 'Raleway', sans-serif;
+    color: white;
   }
   `;
 function App() {
