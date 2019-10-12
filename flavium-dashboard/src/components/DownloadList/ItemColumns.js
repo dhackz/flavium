@@ -5,10 +5,8 @@ const Item = ()  => {
 
   return (
       <ItemStyle>
-          <div>InfoHash</div>
-          <div>Size</div>
+          <div>Name</div>
           <div>Status</div>
-          <div>Date added</div>
       </ItemStyle>
   );
 };

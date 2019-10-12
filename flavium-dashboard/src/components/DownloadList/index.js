@@ -1,20 +1,51 @@
-import React from 'react';
-import { ListStyle, LargeText } from "./styles"
+import React, {useState, useEffect} from 'react';
+import { ListStyle, LargeText, Header} from "./styles"
 import Item from "./Item"
 import ItemColumns from "./ItemColumns"
+import Toggle from "./Toggle"
+import downloads from "./mockDownloads.json"
 
-const DownloadList = () => (
+const DownloadList = () => {
+  
+  const [showList, setShowList] = useState(true);
+
+  const [currentDownloads, setDownloads] = useState([]);
+  
+  useEffect(() => {
+    //TODO: Get real current downloads instead of mock data
+    setDownloads(downloads.downloads);
+  }, [])
+  console.log("downloads prop names: " + Object.getOwnPropertyNames(downloads))
+  
+
+  let itemColumns = null;
+  if(showList){
+    itemColumns = <ItemColumns />
+  }
+
+  return (
     <div>
-      <ItemColumns />
-      <ListStyle>
-          {/* TODO: Get current downloads */}
-          <LargeText>Currently downloading:</LargeText>
-          <Item infoHash={"E1083C831FE2151DF607B109C42D10766AE9700B"} size={700.0} doneSize={254.2} status={"Downloading"} started={"2019-10-05"}/>
-          <Item infoHash={"E1083C831FE2151DF607B109C42D10766AE9700B"} size={700.0} doneSize={254.2} status={"Downloading"} started={"2019-10-05"}/>
-          <Item infoHash={"E1083C831FE2151DF607B109C42D10766AE9700B"} size={700.0} doneSize={254.2} status={"Downloading"} started={"2019-10-05"}/>
-          <Item infoHash={"E1083C831FE2151DF607B109C42D10766AE9700B"} size={700.0} doneSize={254.2} status={"Downloading"} started={"2019-10-05"}/>
+      <Header>
+        <LargeText>Currently downloading:</LargeText> 
+        <Toggle setShowList={setShowList} showList={showList}/>
+      </Header>
+      {itemColumns}
+      <ListStyle showList={showList}>
+      
+          {currentDownloads.map((item,key) => {
+              const { magnetLink } = item;
+
+              return (
+                <Item
+                  magnetLink={magnetLink}
+                  showList={showList}
+                  key={key}
+                />
+              );
+            })}
       </ListStyle>
     </div>
-  );
+  )
+};
 
 export default DownloadList
