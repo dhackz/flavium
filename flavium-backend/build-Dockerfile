@@ -1,1 +1,25 @@
-FROM alpine:3.10
+FROM golang:1.13-alpine
+
+RUN apk add --update \
+    git \
+    curl \
+    libc-dev \
+    protobuf 
+
+ENV GOPATH=/root/go
+
+RUN go get -u -insecure google.golang.org/grpc
+
+RUN go get -u -insecure github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway
+RUN go get -u -insecure github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
+RUN go get -u -insecure github.com/golang/protobuf/protoc-gen-go
+
+RUN go get -u -insecure golang.org/x/oauth2
+
+RUN go get -u -insecure cloud.google.com/go/compute/metadata
+
+RUN echo 'export GOPATH=/root/go' >> /etc/profile 
+RUN echo 'export PATH="$PATH:$GOPATH/bin"' >> /etc/profile
+
+COPY install_protoc.sh /tmp/install_protoc.sh
+RUN /tmp/install_protoc.sh

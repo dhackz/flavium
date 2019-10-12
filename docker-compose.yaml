@@ -34,7 +34,13 @@ services:
   backend:
     build:
       context: flavium-backend
+    environment: 
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+    command: /var/www/main
     image: flavium/backend
+    ports:
+      - 8080:8080
     volumes:
       - "backend-storage:/var/lib/flavium"
   db:

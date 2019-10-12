@@ -1,5 +1,7 @@
 .env
 data
+main
+flavium-backend/main
 transcode
 config
 .idea
