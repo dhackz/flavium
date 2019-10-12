@@ -24,3 +24,19 @@ services:
       - ./data:/data
       - ./transcode:/transcode
       - ./config:/config
+  flavium-dashboard:
+    build:
+      context: flavium-dashboard
+    image: flavium/dashboard
+  flavium-backend:
+    build:
+      context: flavium-backend
+    image: flavium/backend
+  flavium-db:
+    build:
+      context: flavium-db
+    image: flavium/db
+  flavium-vpn:
+    build:
+      context: flavium-vpn
+    image: flavium/vpn
