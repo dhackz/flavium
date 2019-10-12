@@ -2,3 +2,5 @@
 data
 transcode
 config
+.idea
+*.pb.go
