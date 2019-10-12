@@ -4,6 +4,7 @@ import (
 	"../server"
 	pb "../torrents"
 	"context"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"github.com/golang/glog"
@@ -18,6 +19,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 )
 
 const (
@@ -67,6 +69,19 @@ func allowCORS(h http.Handler) http.Handler {
 				return
 			}
 		}
+		if r.URL.Path != "/login" && r.URL.Path != "/callback" {
+			state, err := r.Cookie("oauthstate")
+			if err != nil {
+				fmt.Println(err.Error())
+				http.Redirect(w,r,"/401", http.StatusUnauthorized)
+				return
+			}
+			if state.Value != oauthStateString {
+				fmt.Println("User not authenticated")
+				http.Redirect(w,r,"/401", http.StatusUnauthorized)
+				return
+			}
+		}
 		h.ServeHTTP(w, r)
 	})
 }
@@ -98,39 +113,69 @@ func Run(address string, opts ...runtime.ServeMuxOption) error {
 
 }
 
+
 func handleGoogleLogin(w http.ResponseWriter, r *http.Request) {
 	url := googleOauthConfig.AuthCodeURL(oauthStateString)
 	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
 }
 
 func handleGoogleCallback(w http.ResponseWriter, r *http.Request) {
-	content, err := extractUser(r.FormValue("state"), r.FormValue("code"))
+	user, err := extractUser(r.FormValue("state"), r.FormValue("code"))
 	if err != nil {
 		fmt.Println(err.Error())
 		http.Redirect(w,r,"/", http.StatusTemporaryRedirect)
 		return
 	}
-	fmt.Fprintf(w, "Content: %s\n", content)
+	//TODO(Vilddjur): fetch list of approved emails
+	if user.Email == "approvedemail@example.com" {
+		storeCookie(w, r.FormValue("state"))
+		fmt.Fprintf(w, "Content: %s\n", user)
+		return
+	} else {
+		fmt.Println("User not approved")
+		http.Redirect(w,r,"/", http.StatusUnauthorized)
+		return
+	}
 }
 
-func extractUser(state string, code string) ([]byte, error) {
+func storeCookie(w http.ResponseWriter, state string) {
+	var expiration = time.Now().Add(365 * 24 * time.Hour)
+
+	cookie := http.Cookie{Name: "oauthstate", Value: state, Expires: expiration, Path: "/"}
+	http.SetCookie(w, &cookie)
+}
+
+type User struct {
+	Id string `json:"id"`
+	Email string `json:"email"`
+	VerifiedEmail bool `json:verified_email`
+	Picture string `json:"picture"`
+}
+
+func extractUser(state string, code string) (User, error) {
+	user := User{}
 	if state != oauthStateString {
-		return nil, fmt.Errorf("invalid oauth state")
+		return user, fmt.Errorf("invalid oauth state")
 	}
-	token, err := googleOauthConfig.Exchange(oauth2.NoContext, code)
+	token, err := googleOauthConfig.Exchange(context.Background(), code)
 	if err != nil {
-		return nil, fmt.Errorf("code exchange failed: %s", err.Error())
+		return user, fmt.Errorf("code exchange failed: %s", err.Error())
 	}
 	response, err := http.Get("https://www.googleapis.com/oauth2/v2/userinfo?access_token=" + token.AccessToken)
 	if err != nil {
-		return nil, fmt.Errorf("failed getting user info: %s", err.Error())
+		return user, fmt.Errorf("failed getting user info: %s", err.Error())
 	}
 	defer response.Body.Close()
 	contents, err := ioutil.ReadAll(response.Body)
 	if err != nil {
-		return nil, fmt.Errorf("failed reading response body: %s", err.Error())
+		return user, fmt.Errorf("failed reading response body: %s", err.Error())
 	}
-	return contents, nil
+
+	err = json.Unmarshal(contents, &user)
+	if err != nil {
+		return user, fmt.Errorf("failed reading response body: %s", err.Error())
+	}
+	return user, nil
 }
 
 func main(){
