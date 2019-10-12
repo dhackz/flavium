@@ -1,0 +1,30 @@
+syntax = 'proto3';
+package torrents;
+service Torrent {
+	rpc AddTorrent (AddTorrentRequest) returns (AddTorrentResponse) {}
+	rpc GetStatus (GetStatusRequest) returns (GetStatusResponse) {}
+}
+
+message AddTorrentRequest{
+	string magnetLink = 1;
+}
+
+message AddTorrentResponse {
+	bool ok = 1;
+}
+
+message GetStatusRequest {
+}
+
+message GetStatusResponse {
+	repeated TorrentStatus torrents = 1;
+}
+
+message TorrentStatus {
+	string magnetLink = 1;
+	float size = 2;
+	float doneSize = 3;
+	string status = 4;
+	bool started = 5;
+
+}
