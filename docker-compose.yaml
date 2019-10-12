@@ -53,7 +53,12 @@ services:
     build:
       context: flavium-vpn
     image: flavium/vpn
-
+    cap_add:
+      - NET_ADMIN
+    devices: 
+      - /dev/net/tun
+    sysctls:
+      - net.ipv6.conf.all.disable_ipv6=0
 volumes:
   mysql-storage:
   backend-storage:
