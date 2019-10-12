@@ -1,5 +1,6 @@
 version: '3'
 
+
 services:
   plex:
     image: plexinc/pms-docker
@@ -24,21 +25,29 @@ services:
       - ./data:/data
       - ./transcode:/transcode
       - ./config:/config
-  flavium-dashboard:
+  dashboard:
     build:
       context: flavium-dashboard
     image: flavium/dashboard
     ports:
       - 80:80
-  flavium-backend:
+  backend:
     build:
       context: flavium-backend
     image: flavium/backend
-  flavium-db:
+    volumes:
+      - "backend-storage:/var/lib/flavium"
+  db:
     build:
       context: flavium-db
     image: flavium/db
-  flavium-vpn:
+    volumes:
+      - "mysql-storage:/var/lib/mysql"
+  vpn:
     build:
       context: flavium-vpn
     image: flavium/vpn
+
+volumes:
+  mysql-storage:
+  backend-storage:
