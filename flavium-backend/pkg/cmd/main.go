@@ -20,8 +20,8 @@ const (
 )
 
 var (
-	getEndpoint  = flag.String("get", "localhost:"+grpcPort, "endpoint of YourService")
-	postEndpoint = flag.String("post", "localhost:"+grpcPort, "endpoint of YourService")
+	getEndpoint  = flag.String("get", "localhost:"+grpcPort, "endpoint of TorrentService")
+	postEndpoint = flag.String("post", "localhost:"+grpcPort, "endpoint of TorrentService")
 )
 
 func newGateway(ctx context.Context, opts ...runtime.ServeMuxOption) (http.Handler, error) {
@@ -49,8 +49,6 @@ func preflightHandler(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-// allowCORS allows Cross Origin Resoruce Sharing from any origin.
-// Don't do this without consideration in production systems.
 func allowCORS(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if origin := r.Header.Get("Origin"); origin != "" {
@@ -69,7 +67,6 @@ func Run(address string, opts ...runtime.ServeMuxOption) error {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
-	//mux := runtime.NewServeMux()
 	mux := http.NewServeMux()
 
 	gw, err := newGateway(ctx, opts...)
@@ -92,7 +89,7 @@ func main(){
 		}
 		s := grpc.NewServer()
 		pb.RegisterTorrentServer(s, &server.TorrentServer{})
-		// Register reflection service on gRPC server.
+
 		reflection.Register(s)
 		if err := s.Serve(lis); err != nil {
 			log.Fatalf("failed to serve: %v", err)
@@ -106,49 +103,4 @@ func main(){
 		glog.Fatal(err)
 	}
 
-
-	/*
-		grpcServer := grpc.NewServer()
-		pb.RegisterTorrentServer(grpcServer, &server.TorrentServer{})
-		ctx := context.Background()
-		opts := []grpc.DialOption{grpc.WithInsecure()}
-
-		mux := http.NewServeMux()
-		gwmux := runtime.NewServeMux()
-		err := pb.RegisterTorrentHandlerFromEndpoint(ctx, gwmux, "localhost"+port, opts)
-		if err != nil {
-			fmt.Printf("serve: %v\n", err)
-			return
-		}
-
-		mux.Handle("/", gwmux)
-
-		conn, err := net.Listen("tcp", port)
-		if err != nil {
-			panic(err)
-		}
-
-		srv := &http.Server{
-			Addr:    "localhost"+port,
-			Handler: grpcHandlerFunc(grpcServer, mux),
-		}
-
-		fmt.Printf("grpc on port: %d\n", port)
-		srv.Serve(conn)
-
-		if err != nil {
-			log.Fatal("ListenAndServe: ", err)
-		}
-	*/
-}
-// grpcHandlerFunc returns an http.Handler that delegates to grpcServer on incoming gRPC
-// connections or otherHandler otherwise. Copied from cockroachdb.
-func grpcHandlerFunc(grpcServer *grpc.Server, otherHandler http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.ProtoMajor == 2 && strings.Contains(r.Header.Get("Content-Type"), "application/grpc") {
-			grpcServer.ServeHTTP(w, r)
-		}
-		otherHandler.ServeHTTP(w, r)
-
-	})
 }
