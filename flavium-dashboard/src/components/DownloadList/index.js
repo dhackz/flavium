@@ -7,7 +7,7 @@ import downloads from "./mockDownloads.json"
 
 const DownloadList = () => {
   
-  const [showList, setShowList] = useState(true);
+  const [showList, setShowList] = useState(false);
 
   const [currentDownloads, setDownloads] = useState([]);
   
@@ -15,7 +15,6 @@ const DownloadList = () => {
     //TODO: Get real current downloads instead of mock data
     setDownloads(downloads.downloads);
   }, [])
-  console.log("downloads prop names: " + Object.getOwnPropertyNames(downloads))
   
 
   let itemColumns = null;
