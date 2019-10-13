@@ -3,18 +3,15 @@ import { StyledInput, InputArea, StyledButton } from "./styles"
 
 const Input = () => {
 
-  const parseTorrent = require('parse-torrent')
-
   const [text, setText] = useState("");
 
   const getTorrent = () => {
-    const torrent = parseTorrent("magnet:?xt=urn:btih:"+text)
-    console.log("torrent " + Object.getOwnPropertyNames(torrent))
+    //TODO: Send request to start downloading the magnetlink in the inputfield
   }
 
   return(
     <InputArea>
-        InfoHash: &nbsp;
+        Magnet link: &nbsp;
         <StyledInput value={text} onChange={e => setText(e.target.value)}/> 
         <StyledButton type="button" onClick={getTorrent}>Add</StyledButton>
     </InputArea>

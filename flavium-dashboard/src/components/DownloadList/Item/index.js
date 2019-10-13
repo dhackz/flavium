@@ -6,24 +6,7 @@ const parseTorrent = require('parse-torrent')
 const Item = ({showList, magnetLink})  => {
 
   useEffect(()=> {
-    getTorrentInfo(magnetLink)
-  }, [])
-
-  const [name, setName] = useState("It: Chapter 2");
-  const [posterSrc, setPosterSrc] = useState("");
-
-  let size = 700.0;
-  let doneSize = 254.2;
-  let status = "Downloading";
-
-  const getPoster = async(url) => {
-    const api_call = await fetch(url);
-    const data = await api_call.json();
-    setPosterSrc("http://image.tmdb.org/t/p/w200//" +data.results[0].poster_path);
-    }
-
-  const getTorrentInfo = (link) => {
-    const torrentData = parseTorrent(link)
+    const torrentData = parseTorrent(magnetLink)
     const regex = /(.*) ([12][09]\d\d)[ \n]/;
     let stringVal = torrentData.name
     stringVal = stringVal.replace(/\./g,' ')
@@ -36,6 +19,19 @@ const Item = ({showList, magnetLink})  => {
     const posterQuery = "https://api.themoviedb.org/3/search/movie?api_key="+ process.env.REACT_APP_MOVIE_KEY +"&query="+(stringVal.replace(/ /g,"%20"));
     getPoster(posterQuery)
     setName(stringVal)
+  }, [magnetLink])
+
+  const [name, setName] = useState("It: Chapter 2");
+  const [posterSrc, setPosterSrc] = useState("");
+
+  let size = 700.0;
+  let doneSize = 254.2;
+  let status = "Downloading";
+
+  const getPoster = async(url) => {
+    const api_call = await fetch(url);
+    const data = await api_call.json();
+    setPosterSrc("http://image.tmdb.org/t/p/w200//" +data.results[0].poster_path);
   }
 
   return (
