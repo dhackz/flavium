@@ -1,12 +1,27 @@
 FROM golang:1.13-alpine
 
+ARG UNAME=testuser
+ARG UID=1000
+ARG GID=1000
+
 RUN apk add --update \
     git \
     curl \
     libc-dev \
     protobuf 
 
-ENV GOPATH=/root/go
+RUN addgroup -g $GID $UNAME
+RUN adduser \
+    -h /home/$UNAME \
+    -s /bin/sh \
+    -G $UNAME \
+    -D \
+    -u $UID \
+    $UNAME
+
+ENV GOPATH=/tmp/go
+
+USER $UNAME
 
 RUN go get -u -insecure google.golang.org/grpc
 
@@ -18,8 +33,9 @@ RUN go get -u -insecure golang.org/x/oauth2
 
 RUN go get -u -insecure cloud.google.com/go/compute/metadata
 
-RUN echo 'export GOPATH=/root/go' >> /etc/profile 
-RUN echo 'export PATH="$PATH:$GOPATH/bin"' >> /etc/profile
+RUN echo 'export GOPATH=/tmp/go' >> /home/$UNAME/profile 
+RUN echo 'export PATH="$PATH:$GOPATH/bin"' >> /home/$UNAME/profile
 
+USER root
 COPY install_protoc.sh /tmp/install_protoc.sh
 RUN /tmp/install_protoc.sh

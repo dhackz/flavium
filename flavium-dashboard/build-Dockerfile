@@ -17,18 +17,4 @@ RUN adduser \
     -u $UID \
     $UNAME
 
-RUN echo "\"NODE_PATH=\$NODE_PATH:/home/$UNAME/node-packages\"" >> /etc/profile
 USER $UNAME
-
-RUN mkdir -p /home/$UNAME/node-packages
-WORKDIR /home/$UNAME/node-packages
-RUN npm install \
-        react \
-        react-scripts \
-        react-dom \
-        styled-components \
-        parse-torrent \
-        typescript \
-        csstools/normalize.css
-
-WORKDIR /home/$UNAME/
