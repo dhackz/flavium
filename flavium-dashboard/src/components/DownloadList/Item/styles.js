@@ -7,13 +7,16 @@ export const ItemStyle = styled.li`
 
     list-style: none;
     background: rgba(0, 0, 0, 0.2);
+    
+    background-image:  ${props => props.showList ? "rgba(0,0,0,0.2)" : "url("+props.posterSrc+")"};
     &:nth-child(odd){
-        background: rgba(0, 0, 0, 0.3);
+        background: ${props => props.showList ? "rgba(0, 0, 0, 0.3)" : ""} 
     }
     box-shadow:  ${props => props.showList ? "none" : "0 4px 8px 0 rgba(0, 0, 0, 0.2)"};
     
     color:  white;
     height:  ${props => props.showList ? "60px" : "320px"};
+    background-size: cover;
 `;
 
 export const ProgressBar = styled.div`

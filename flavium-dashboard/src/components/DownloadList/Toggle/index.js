@@ -1,5 +1,5 @@
 import React from 'react';
-import {ListBtn, CardBtn, ToggleBtn} from "./styles";
+import {ToggleBtn} from "./styles";
 
 const Toggle = ({setShowList, showList}) => {
 
