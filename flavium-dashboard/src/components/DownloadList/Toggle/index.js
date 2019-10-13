@@ -1,5 +1,5 @@
 import React from 'react';
-import {ToggleBtn} from "./styles";
+import {ToggleBtn, ToggleStyle, Image} from "./styles";
 
 const Toggle = ({setShowList, showList}) => {
 
@@ -11,10 +11,10 @@ const Toggle = ({setShowList, showList}) => {
     };
 
     return (
-        <>
-            <ToggleBtn onClick={() => listClick()} selected={showList}>List</ToggleBtn>
-            <ToggleBtn onClick={() => cardClick()} selected={!showList}>Cards</ToggleBtn>
-        </>
+        <ToggleStyle>
+            <ToggleBtn onClick={() => cardClick()} selected={!showList}><Image src="./grid.png" selected={!showList} /></ToggleBtn>
+            <ToggleBtn onClick={() => listClick()} selected={showList}isListBtn={true}><Image src="./iconListBlack.png" selected={showList} /></ToggleBtn>
+        </ToggleStyle>
     )
 };
 
