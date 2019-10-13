@@ -1,22 +1,27 @@
 import styled from "styled-components"
+export const ItemContainer = styled.div`
+    background: ${props => props.showList ? "" : "linear-gradient(black, rgba(0,0,0,0.2), rgba(0,0,0,0.2), black);"}
+    height: ${props => props.showList ? "60px" : "320px"}
+    display: ${props => props.showList ? "grid" : "block"}
+    grid-template-columns: ${props => props.showList ? "50% 50%" : "100%"};
+`;
 
 export const ItemStyle = styled.li`
-    padding:  ${props => props.showList ? "20px" : "0"};
-    display: ${props => props.showList ? "grid": "block"};
-    grid-template-columns: ${props => props.showList ? "50% 50%" : "auto"};
-
+    color: white;
     list-style: none;
     background: rgba(0, 0, 0, 0.2);
-    
-    background-image:  ${props => props.showList ? "rgba(0,0,0,0.2)" : "url("+props.posterSrc+")"};
-    &:nth-child(odd){
-        background: ${props => props.showList ? "rgba(0, 0, 0, 0.3)" : ""} 
-    }
-    box-shadow:  ${props => props.showList ? "none" : "0 4px 8px 0 rgba(0, 0, 0, 0.2)"};
-    
-    color:  white;
-    height:  ${props => props.showList ? "60px" : "320px"};
     background-size: cover;
+    ${props => { if(props.showList) { return(
+        '&:nth-child(odd){background: rgba(0, 0, 0, 0.3)};'+
+        'padding: 20px;'+
+        'box-shadow: none;'+
+        'height: 60px;'
+    )} else { return(
+        'background-image: url(' + props.posterSrc+ ');'+
+        'padding: 0;'+
+        'box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);'+
+        'height: 320px;'
+    )}}}
 `;
 
 export const ProgressBar = styled.div`

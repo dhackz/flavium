@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { ItemStyle, Name, Percentage, Bottom, ProgressBar} from "./styles"
+import { ItemStyle, Name, Percentage, Bottom, ProgressBar, ItemContainer} from "./styles"
 require('dotenv').config()
 const parseTorrent = require('parse-torrent')
 
@@ -40,6 +40,7 @@ const Item = ({showList, magnetLink})  => {
 
   return (
       <ItemStyle showList={showList} posterSrc={posterSrc}>
+        <ItemContainer showList={showList}>
           <Name showList={showList}>{name}</Name>
           {/* <Size>{size.toFixed(1)}MB</Size>*/}
           <Bottom showList={showList}>
@@ -49,6 +50,7 @@ const Item = ({showList, magnetLink})  => {
                 <div></div>
             </ProgressBar>
           </Bottom>
+        </ItemContainer>
       </ItemStyle>
   );
 };
