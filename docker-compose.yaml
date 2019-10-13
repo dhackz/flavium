@@ -59,6 +59,24 @@ services:
       - /dev/net/tun
     sysctls:
       - net.ipv6.conf.all.disable_ipv6=0
+  transmission:
+    image: linuxserver/transmission
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/London
+    volumes:
+      - transmission-config:/config
+      - transmission-downloads:/downloads
+      - transmission-watch:/watch
+    ports:
+      - 9091:9091
+      - 51413:51413
+      - 51413:51413/udp
+    restart: unless-stopped
 volumes:
   mysql-storage:
   backend-storage:
+  transmission-config:
+  transmission-downloads:
+  transmission-watch:
