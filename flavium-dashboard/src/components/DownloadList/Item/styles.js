@@ -4,6 +4,7 @@ export const ItemContainer = styled.div`
     height: ${props => props.showList ? "60px" : "320px"}
     display: ${props => props.showList ? "grid" : "block"}
     grid-template-columns: ${props => props.showList ? "50% 50%" : "100%"};
+    background-repeat: no-repeat;
 `;
 
 export const ItemStyle = styled.li`
@@ -22,6 +23,10 @@ export const ItemStyle = styled.li`
         'box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);'+
         'height: 320px;'
     )}}}
+    transition: all .2s ease-in-out;
+    &:hover{
+        ${props => props.showList ? "" : "transform: scale(1.1);"}
+    }
 `;
 
 export const ProgressBar = styled.div`
