@@ -30,6 +30,8 @@ var (
 	getEndpoint  = flag.String("get", "localhost:"+grpcPort, "endpoint of TorrentService")
 	postEndpoint = flag.String("post", "localhost:"+grpcPort, "endpoint of TorrentService")
 
+	dryRun = flag.Bool("dry_run", true, "Print commands instead of running them")
+
 	oauthStateString = "pseudo-random"
 
 	googleOauthConfig *oauth2.Config
@@ -185,7 +187,7 @@ func main(){
 			log.Fatalf("failed to listen: %v", err)
 		}
 		s := grpc.NewServer()
-		pb.RegisterTorrentServer(s, &server.TorrentServer{})
+		pb.RegisterTorrentServer(s, &server.TorrentServer{IsDryRun: *dryRun})
 
 		reflection.Register(s)
 		if err := s.Serve(lis); err != nil {

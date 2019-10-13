@@ -3,13 +3,20 @@ package server
 import (
 	pb "../torrents"
 	"context"
+	"fmt"
 )
 
 type TorrentServer struct {
-
+	IsDryRun bool
 }
 
-func (t *TorrentServer) AddTorrent(context.Context, *pb.AddTorrentRequest) (*pb.AddTorrentResponse, error) {
+func (t *TorrentServer) AddTorrent(_ context.Context, req *pb.AddTorrentRequest) (*pb.AddTorrentResponse, error) {
+	cmd := fmt.Sprintf("transmission-remote -a '%s'", req.MagnetLink)
+	if t.IsDryRun {
+		fmt.Println("DRYRUN: " + cmd)
+	} else {
+		fmt.Println("RUNNING: " + cmd)
+	}
 	return &pb.AddTorrentResponse{Ok:true}, nil
 }
 
