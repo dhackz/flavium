@@ -1,4 +1,4 @@
-## Setup
+## Build
 `cd flavium-backend`  
 
 `make`  
