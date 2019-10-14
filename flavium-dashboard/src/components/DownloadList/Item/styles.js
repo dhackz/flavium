@@ -5,9 +5,20 @@ export const ItemContainer = styled.div`
     display: ${props => props.showList ? "grid" : "block"}
     grid-template-columns: ${props => props.showList ? "50% 50%" : "100%"};
     background-repeat: no-repeat;
+    background-size: cover;
+
+    transition: all .2s ease-in-out;
+    &:hover{
+        background: ${props => props.showList ? "" : "linear-gradient(black, rgba(0,0,0,0.5), rgba(0,0,0,0.5), black);"}
+        
+        transform: scale(1.1);
+
+    }
 `;
 
 export const ItemStyle = styled.li`
+    
+    width: 210px;
     color: white;
     list-style: none;
     background: rgba(0, 0, 0, 0.2);
@@ -24,9 +35,11 @@ export const ItemStyle = styled.li`
         'height: 320px;'
     )}}}
     transition: all .2s ease-in-out;
-    &:hover{
-        ${props => props.showList ? "" : "transform: scale(1.1);"}
+    @media (min-width: 768px){
+        margin-bottom: ${props => props.isExpanded ? "195%" : "0"}
     }
+    margin-bottom: ${props => props.isExpanded ? "330%" : "0"}
+    outline: ${props => props.isExpanded ? "5px rgba(255,255,255,0.7) solid" : "none"}
 `;
 
 export const ProgressBar = styled.div`
