@@ -30,7 +30,7 @@ var (
 	getEndpoint  = flag.String("get", "localhost:"+grpcPort, "endpoint of TorrentService")
 	postEndpoint = flag.String("post", "localhost:"+grpcPort, "endpoint of TorrentService")
 
-	dryRun = flag.Bool("dry_run", true, "Print commands instead of running them")
+	dryRun = flag.Bool("dry_run", false, "Print commands instead of running them")
 
 	oauthStateString = "pseudo-random"
 
@@ -150,7 +150,7 @@ func storeCookie(w http.ResponseWriter, state string) {
 type User struct {
 	Id string `json:"id"`
 	Email string `json:"email"`
-	VerifiedEmail bool `json:verified_email`
+	VerifiedEmail bool `json:"verified_email"`
 	Picture string `json:"picture"`
 }
 

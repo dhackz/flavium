@@ -7,3 +7,4 @@ config
 .idea
 *.pb.go
 *.pb.*
+transmission
