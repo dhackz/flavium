@@ -25,7 +25,7 @@ const TRANSMISSION_BODY_EXPRESSION = "^\\s+" +
 "\\s+" +
 "(?P<ratio>\\d+.\\d+)" +
 "\\s+" +
-"(?P<status>\\w+)" +
+"(?P<status>\\w+|(\\w+ & \\w+))" +
 "\\s+" +
 "(?P<name>[^ ]+)$"
 var TRANSMISSION_BODY_PARSER = regexp.MustCompile(TRANSMISSION_BODY_EXPRESSION)
@@ -72,7 +72,7 @@ func getTorrentStatus(transmissionOutput string) []*pb.TorrentStatus {
     torrents := make([]*pb.TorrentStatus, len(outputLines))
     fmt.Println(len(outputLines))
     for i, line := range outputLines {
-        fmt.Println("Parsing line: \"\"\"%s\"\"\"", line)
+        fmt.Printf("Parsing line: \"%s\"\n", line)
         match := TRANSMISSION_BODY_PARSER.FindStringSubmatch(line)
         result := make(map[string]string)
         for j, name := range TRANSMISSION_BODY_PARSER.SubexpNames() {
@@ -107,9 +107,9 @@ func (t *TorrentServer) GetStatus(context.Context, *pb.GetStatusRequest) (*pb.Ge
 		fmt.Println("RUNNING: " + cmd)
 
 		output, err := exec.Command("transmission-remote",os.Getenv("TRANSMISSION_HOST"),"-l").Output()
-        fmt.Printf("CMD output: %s", output)
+        fmt.Printf("CMD output: %s\n", output)
 		if err != nil{
-			fmt.Printf(err.Error())
+			fmt.Println(err.Error())
 		}
 
         torrents := getTorrentStatus(string(output))
