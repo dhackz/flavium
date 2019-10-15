@@ -8,14 +8,15 @@ import downloads from "./mockDownloads.json"
 const DownloadList = () => {
   
   const [showList, setShowList] = useState(false);
-
   const [currentDownloads, setDownloads] = useState([]);
+  const [isListExpanded, setIsListExpanded] = useState(false);
+  const [indexOfExpanded, setIndexOfExpanded] = useState(null);
+
   
   useEffect(() => {
     //TODO: Get real current downloads instead of mock data
     setDownloads(downloads.downloads);
   }, [])
-  
 
   let itemColumns = null;
   if(showList){
@@ -33,12 +34,19 @@ const DownloadList = () => {
       
           {currentDownloads.map((item,key) => {
               const { magnetLink } = item;
-
+              let isExpanded = false;
+              if(isListExpanded && key===indexOfExpanded){
+                isExpanded=true;
+              }
               return (
                 <Item
                   magnetLink={magnetLink}
                   showList={showList}
                   key={key}
+                  setIsListExpanded={setIsListExpanded}
+                  setIndexOfExpanded={setIndexOfExpanded}
+                  isExpanded={isExpanded}
+                  index={key}
                 />
               );
             })}

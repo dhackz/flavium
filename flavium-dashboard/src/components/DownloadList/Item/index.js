@@ -1,9 +1,10 @@
 import React, {useState, useEffect} from 'react';
 import { ItemStyle, Name, Percentage, Bottom, ProgressBar, ItemContainer} from "./styles"
+import Details from "./Details"
 require('dotenv').config()
 const parseTorrent = require('parse-torrent')
 
-const Item = ({showList, magnetLink})  => {
+const Item = ({showList, magnetLink, setIsListExpanded, setIndexOfExpanded, isExpanded, index})  => {
 
   useEffect(()=> {
     const torrentData = parseTorrent(magnetLink)
@@ -16,27 +17,54 @@ const Item = ({showList, magnetLink})  => {
     
     stringVal = stringVal.substring(0, lastIndex);
 
-    const posterQuery = "https://api.themoviedb.org/3/search/movie?api_key="+ process.env.REACT_APP_MOVIE_KEY +"&query="+(stringVal.replace(/ /g,"%20"));
-    getPoster(posterQuery)
+    const getPoster = async(url) => {
+      const api_call = await fetch(url);
+      const data = await api_call.json();
+      setPosterSrc("http://image.tmdb.org/t/p/w200//" +data.results[0].poster_path);
+      setDescription(data.results[0].overview)
+      setVoteAverage(data.results[0].vote_average)
+      getTrailerLink(data.results[0].id);
+    }
+
+    getPoster("https://api.themoviedb.org/3/search/movie?api_key="+ process.env.REACT_APP_MOVIE_KEY +"&query="+(stringVal.replace(/ /g,"%20")))
+    
     setName(stringVal)
   }, [magnetLink])
 
   const [name, setName] = useState("It: Chapter 2");
   const [posterSrc, setPosterSrc] = useState("");
+  const [description, setDescription] = useState("");
+  const [youtubeId, setYoutubeId] = useState("");
+  const [voteAverage, setVoteAverage] = useState(0.0);
 
   let size = 700.0;
   let doneSize = 254.2;
   let status = "Downloading";
 
-  const getPoster = async(url) => {
-    const api_call = await fetch(url);
+  const getTrailerLink = async(movieId) => {
+    const api_call = await fetch("http://api.themoviedb.org/3/movie/"+movieId+"/videos?api_key="+process.env.REACT_APP_MOVIE_KEY)
     const data = await api_call.json();
-    setPosterSrc("http://image.tmdb.org/t/p/w200//" +data.results[0].poster_path);
+    setYoutubeId(data.results[0].key)
+  }
+
+  let details = null;
+  const handleClick = () => {
+    if(!isExpanded){
+      setIsListExpanded(true)
+      setIndexOfExpanded(index)
+    }else{
+      setIsListExpanded(false);
+      setIndexOfExpanded(null)
+    }
+  }
+  if(isExpanded){
+    details = <Details name={name} description={description} youtubeId={youtubeId} voteAverage={voteAverage}/>;
   }
 
   return (
-      <ItemStyle showList={showList} posterSrc={posterSrc}>
-        <ItemContainer showList={showList}>
+    <>
+      <ItemStyle showList={showList} posterSrc={posterSrc} isExpanded={isExpanded} onClick={(event) => {handleClick(event)}}>
+        <ItemContainer showList={showList} id="item-container">
           <Name showList={showList}>{name}</Name>
           {/* <Size>{size.toFixed(1)}MB</Size>*/}
           <Bottom showList={showList}>
@@ -47,7 +75,9 @@ const Item = ({showList, magnetLink})  => {
             </ProgressBar>
           </Bottom>
         </ItemContainer>
+          {details}
       </ItemStyle>
+          </>
   );
 };
 
