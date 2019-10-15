@@ -54,8 +54,10 @@ func newGateway(ctx context.Context, opts ...runtime.ServeMuxOption) (http.Handl
 }
 
 func preflightHandler(w http.ResponseWriter, r *http.Request) {
-	headers := []string{"Content-Type", "Accept"}
+	credentials := []string{"Access-Control-Allow-Credentials", "true"}
+	headers := []string{"Content-Type", "Accept",credentials[0]}
 	w.Header().Set("Access-Control-Allow-Headers", strings.Join(headers, ","))
+	w.Header().Set(credentials[0], credentials[1])
 	methods := []string{"GET", "HEAD", "POST", "PUT", "DELETE"}
 	w.Header().Set("Access-Control-Allow-Methods", strings.Join(methods, ","))
 	glog.Infof("preflight request for %s", r.URL.Path)
@@ -64,6 +66,7 @@ func preflightHandler(w http.ResponseWriter, r *http.Request) {
 
 func allowCORS(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
 		if origin := r.Header.Get("Origin"); origin != "" {
 			w.Header().Set("Access-Control-Allow-Origin", origin)
 			if r.Method == "OPTIONS" && r.Header.Get("Access-Control-Request-Method") != "" {
@@ -71,6 +74,8 @@ func allowCORS(h http.Handler) http.Handler {
 				return
 			}
 		}
+		credentials := []string{"Access-Control-Allow-Credentials", "true"}
+		w.Header().Set(credentials[0], credentials[1])
 		if r.URL.Path != "/login" && r.URL.Path != "/callback" {
 			state, err := r.Cookie("oauthstate")
 			if err != nil {
