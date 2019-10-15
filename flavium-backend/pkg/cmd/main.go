@@ -58,15 +58,18 @@ func preflightHandler(w http.ResponseWriter, r *http.Request) {
 	headers := []string{"Content-Type", "Accept",credentials[0]}
 	w.Header().Set("Access-Control-Allow-Headers", strings.Join(headers, ","))
 	w.Header().Set(credentials[0], credentials[1])
-	methods := []string{"GET", "HEAD", "POST", "PUT", "DELETE"}
+	methods := []string{"GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS"}
 	w.Header().Set("Access-Control-Allow-Methods", strings.Join(methods, ","))
-	glog.Infof("preflight request for %s", r.URL.Path)
+	fmt.Printf("preflight request for %s \n", r.URL.Path)
 	return
 }
 
 func allowCORS(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
+		credentials := []string{"Access-Control-Allow-Credentials", "true"}
+		expose := []string{"Access-Control-Expose-Headers", "Location"}
+		w.Header().Set(credentials[0], credentials[1])
+		w.Header().Set(expose[0], expose[1])
 		if origin := r.Header.Get("Origin"); origin != "" {
 			w.Header().Set("Access-Control-Allow-Origin", origin)
 			if r.Method == "OPTIONS" && r.Header.Get("Access-Control-Request-Method") != "" {
@@ -74,8 +77,6 @@ func allowCORS(h http.Handler) http.Handler {
 				return
 			}
 		}
-		credentials := []string{"Access-Control-Allow-Credentials", "true"}
-		w.Header().Set(credentials[0], credentials[1])
 		if r.URL.Path != "/login" && r.URL.Path != "/callback" {
 			state, err := r.Cookie("oauthstate")
 			if err != nil {
@@ -114,12 +115,28 @@ func Run(address string, opts ...runtime.ServeMuxOption) error {
 	}
 	mux.HandleFunc("/callback", handleGoogleCallback)
 	mux.HandleFunc("/login", handleGoogleLogin)
+	mux.HandleFunc("/auth", handleAuth)
 	mux.Handle("/", gw)
 
 	return http.ListenAndServe(address, allowCORS(mux))
 
 }
 
+func handleAuth(w http.ResponseWriter, r *http.Request) {
+	state, err := r.Cookie("oauthstate")
+	if err != nil {
+		fmt.Println(err.Error())
+		http.Redirect(w,r,"/401", http.StatusUnauthorized)
+		return
+	}
+	if state.Value != oauthStateString {
+		fmt.Println("User not authenticated")
+		http.Redirect(w,r,"/401", http.StatusUnauthorized)
+		return
+	}
+	fmt.Fprintf(w, "ok")
+	return
+}
 
 func handleGoogleLogin(w http.ResponseWriter, r *http.Request) {
 	url := googleOauthConfig.AuthCodeURL(oauthStateString)
@@ -129,14 +146,13 @@ func handleGoogleLogin(w http.ResponseWriter, r *http.Request) {
 func handleGoogleCallback(w http.ResponseWriter, r *http.Request) {
 	user, err := extractUser(r.FormValue("state"), r.FormValue("code"))
 	if err != nil {
-		fmt.Println(err.Error())
 		http.Redirect(w,r,"/", http.StatusTemporaryRedirect)
 		return
 	}
 	//TODO(Vilddjur): fetch list of approved emails
-	if user.Email == "approvedemail@example.com" {
+	if user.Email == "approvedemail@gmail.com" {
 		storeCookie(w, r.FormValue("state"))
-		fmt.Fprintf(w, "Content: %s\n", user)
+		http.Redirect(w,r,"http://localhost/", http.StatusTemporaryRedirect)
 		return
 	} else {
 		fmt.Println("User not approved")

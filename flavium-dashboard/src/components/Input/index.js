@@ -6,8 +6,6 @@ const Input = () => {
   const [text, setText] = useState("");
 
   const getTorrent = () => {
-      console.log("adasd");
-    //TODO: Send request to start downloading the magnetlink in the inputfield
       fetch("http://localhost:8080/v1/torrent", {
           method: 'POST',
           credentials: 'include',

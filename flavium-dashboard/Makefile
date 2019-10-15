@@ -17,6 +17,6 @@ build-container:
 		--build-arg UID=$(shell id -u) \
 		--build-arg GID=$(shell id -g) \
 		--build-arg UNAME=$(shell whoami) \
-		-f build-Dockerfile \
+		-f $(mkfile_dir)/build-Dockerfile \
 		-t flavium/dashboard:build-1.0 \
-		.
+		$(mkfile_dir)

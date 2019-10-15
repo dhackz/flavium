@@ -8,3 +8,4 @@ config
 *.pb.go
 *.pb.*
 transmission
+package-lock.json
