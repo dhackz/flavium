@@ -1,5 +1,4 @@
 FROM alpine:3.10
 RUN apk add --update \
-    transmission-cli \
-    wget
+    transmission-cli
 COPY main /var/www/main
