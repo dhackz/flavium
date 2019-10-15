@@ -3,7 +3,6 @@ import { ListStyle, LargeText, Header} from "./styles"
 import Item from "./Item"
 import ItemColumns from "./ItemColumns"
 import Toggle from "./Toggle"
-import downloads from "./mockDownloads.json"
 
 const DownloadList = () => {
   
@@ -12,11 +11,24 @@ const DownloadList = () => {
   const [isListExpanded, setIsListExpanded] = useState(false);
   const [indexOfExpanded, setIndexOfExpanded] = useState(null);
 
-  
+
   useEffect(() => {
+      fetchData()
+  },[]);
+
+  const fetchData = async () => {
     //TODO: Get real current downloads instead of mock data
-    setDownloads(downloads.downloads);
-  }, [])
+      const result = await fetch("http://localhost:8080/v1/torrent", {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+              "Access-Control-Allow-Credentials":"true"
+          },
+      });
+      const json = await result.json()
+      console.log(json)
+      await setDownloads(json.torrents);
+  }
 
   let itemColumns = null;
   if(showList){
@@ -31,16 +43,14 @@ const DownloadList = () => {
       </Header>
       {itemColumns}
       <ListStyle showList={showList}>
-      
           {currentDownloads.map((item,key) => {
-              const { magnetLink } = item;
               let isExpanded = false;
               if(isListExpanded && key===indexOfExpanded){
                 isExpanded=true;
               }
               return (
                 <Item
-                  magnetLink={magnetLink}
+                  download={item}
                   showList={showList}
                   key={key}
                   setIsListExpanded={setIsListExpanded}

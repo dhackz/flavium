@@ -27,7 +27,7 @@ const TRANSMISSION_BODY_EXPRESSION = "^\\s+" +
 "\\s+" +
 "(?P<status>\\w+|(\\w+ & \\w+))" +
 "\\s+" +
-"(?P<name>[^ ]+)$"
+"(?P<name>.+)$"
 var TRANSMISSION_BODY_PARSER = regexp.MustCompile(TRANSMISSION_BODY_EXPRESSION)
 
 type TorrentServer struct {

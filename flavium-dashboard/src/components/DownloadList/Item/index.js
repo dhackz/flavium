@@ -2,34 +2,33 @@ import React, {useState, useEffect} from 'react';
 import { ItemStyle, Name, Percentage, Bottom, ProgressBar, ItemContainer} from "./styles"
 import Details from "./Details"
 require('dotenv').config()
-const parseTorrent = require('parse-torrent')
 
-const Item = ({showList, magnetLink, setIsListExpanded, setIndexOfExpanded, isExpanded, index})  => {
+const Item = ({showList, download, setIsListExpanded, setIndexOfExpanded, isExpanded, index})  => {
 
   useEffect(()=> {
-    const torrentData = parseTorrent(magnetLink)
     const regex = /(.*) ([12][09]\d\d)[ \n]/;
-    let stringVal = torrentData.name
+    let stringVal = download.Name;
+    console.log(stringVal);
     stringVal = stringVal.replace(/\./g,' ')
-    stringVal = stringVal.match(regex)[0];
     stringVal = stringVal.substring(0, stringVal.length - 1);
     var lastIndex = stringVal.lastIndexOf(" ");
     
     stringVal = stringVal.substring(0, lastIndex);
-
     const getPoster = async(url) => {
       const api_call = await fetch(url);
       const data = await api_call.json();
-      setPosterSrc("http://image.tmdb.org/t/p/w200//" +data.results[0].poster_path);
-      setDescription(data.results[0].overview)
-      setVoteAverage(data.results[0].vote_average)
-      getTrailerLink(data.results[0].id);
+      if(data.results){
+        setPosterSrc("http://image.tmdb.org/t/p/w200//" +data.results[0].poster_path);
+        setDescription(data.results[0].overview)
+        setVoteAverage(data.results[0].vote_average)
+        getTrailerLink(data.results[0].id);
+      }
     }
 
     getPoster("https://api.themoviedb.org/3/search/movie?api_key="+ process.env.REACT_APP_MOVIE_KEY +"&query="+(stringVal.replace(/ /g,"%20")))
     
     setName(stringVal)
-  }, [magnetLink])
+  }, [download])
 
   const [name, setName] = useState("It: Chapter 2");
   const [posterSrc, setPosterSrc] = useState("");
