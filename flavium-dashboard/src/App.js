@@ -14,6 +14,7 @@ const GlobalStyles = createGlobalStyle`
 
 function App() {
     const [signedIn, setSignedIn] = useState(false);
+    const [torrentPosted, setTorrentPosted] = useState(false);
 
     const authenticate = () => {
         fetch("http://localhost:8080/auth", {
@@ -31,6 +32,11 @@ function App() {
             }
         );
     };
+    const onTorrentPost = (result) => {
+        if(result.ok){
+            setTorrentPosted(!torrentPosted);
+        }
+    }
 
     authenticate();
     
@@ -39,8 +45,8 @@ function App() {
         <div className="App">
             <GlobalStyles/>
             <Header/>
-            <Input/>
-            <DownloadList/>
+            <Input onPost={onTorrentPost}/>
+            <DownloadList postListener={torrentPosted}/>
         </div>
       );
     }else {

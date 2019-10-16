@@ -7,7 +7,6 @@ const Item = ({showList, download, setIsListExpanded, setIndexOfExpanded, isExpa
 
   useEffect(()=> {
     let stringVal = download.Name;
-    console.log(stringVal);
     stringVal = stringVal.replace(/\./g,' ')
     stringVal = stringVal.substring(0, stringVal.length - 1);
     var lastIndex = stringVal.lastIndexOf(" ");

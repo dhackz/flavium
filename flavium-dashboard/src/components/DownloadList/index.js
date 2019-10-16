@@ -4,7 +4,7 @@ import Item from "./Item"
 import ItemColumns from "./ItemColumns"
 import Toggle from "./Toggle"
 
-const DownloadList = () => {
+const DownloadList = ({postListener}) => {
   
   const [showList, setShowList] = useState(false);
   const [currentDownloads, setDownloads] = useState([]);
@@ -14,7 +14,7 @@ const DownloadList = () => {
 
   useEffect(() => {
       fetchData()
-  },[]);
+  },[postListener]);
 
   const fetchData = async () => {
     //TODO: Get real current downloads instead of mock data

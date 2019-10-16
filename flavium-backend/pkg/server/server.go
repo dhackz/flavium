@@ -15,24 +15,27 @@ const TRANSMISSION_BODY_EXPRESSION = "^\\s+" +
 "\\s+" +
 "(?P<done>(?:\\d+%|n/a))" +
 "\\s+" +
-"(?P<have>\\d+.\\d+ [MGKmkg]B)" +
+"(?P<have>\\d+.\\d+ [MGKmkg]B|None)" +
 "\\s+" +
-"(?P<eta>(?:\\d+ (?:min|hours))|Done|Unknown)" +
+"(?P<eta>(?:\\d+ (?:min|hrs|sec))|Done|Unknown)" +
 "\\s+" +
 "(?P<up>\\d+.\\d+)" +
 "\\s+" +
 "(?P<down>\\d+.\\d+)" +
 "\\s+" +
-"(?P<ratio>\\d+.\\d+)" +
+"(?P<ratio>\\d+.\\d+|None)" +
 "\\s+" +
 "(?P<status>\\w+|(\\w+ & \\w+))" +
 "\\s+" +
 "(?P<name>.+)$"
 
 const testOutput = "ID     Done       Have  ETA           Up    Down  Ratio  Status       Name \n" +
-	"  1   100%    1.59 GB  Done         0.0     0.0    0.6  Idle         My day at the zoo \n" +
-	"  2   100%    2.01 GB  Done       180.0     0.0    0.0  Seeding      Wedding photos \n" +
-	"Sum:           3.60 GB             180.0     0.0"
+	"   1   100%    1.59 GB  Done         0.0     0.0    0.6  Idle         My day at the zoo \n" +
+	"   2   100%    2.01 GB  Done       180.0     0.0    0.0  Seeding      Wedding photos \n" +
+	"   3    93%    2.11 GB  23 sec       0.0  6819.0    0.0  Downloading  Long name of video with S[p]e.ci#al Ch^a.rs}{ \n" +
+	"   4    n/a       None  Unknown      0.0     0.0   None  Downloading  Long+name+with+pluses+for+some+reason\n" +
+	"   5    88%    1.48 GB  31 sec       0.0  6008.0    0.0  Up & Down    Up and down torrent\n" +
+	"Sum:           3.60 GB             180.0     0.0\n"
 
 var TRANSMISSION_BODY_PARSER = regexp.MustCompile(TRANSMISSION_BODY_EXPRESSION)
 
@@ -72,7 +75,7 @@ func getTorrentStatus(transmissionOutput string) []*pb.TorrentStatus {
     fmt.Printf("%+v\n", outputLines)
     fmt.Println(len(outputLines))
     if len(outputLines) > 2 {
-        outputLines = outputLines[1:len(outputLines)-1]
+        outputLines = outputLines[1:len(outputLines)-2]
     } else {
         return nil
     }
