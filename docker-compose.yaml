@@ -38,7 +38,8 @@ services:
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
       - TRANSMISSION_HOST=${TRANSMISSION_HOST}
-    command: /var/www/main
+    entrypoint: /bin/sh
+    command: -c "/var/www/main --dry_run=true"
     image: flavium/backend
     ports:
       - 8080:8080

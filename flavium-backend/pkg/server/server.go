@@ -28,6 +28,12 @@ const TRANSMISSION_BODY_EXPRESSION = "^\\s+" +
 "(?P<status>\\w+|(\\w+ & \\w+))" +
 "\\s+" +
 "(?P<name>.+)$"
+
+const testOutput = "ID     Done       Have  ETA           Up    Down  Ratio  Status       Name \n" +
+	"  1   100%    1.59 GB  Done         0.0     0.0    0.6  Idle         My day at the zoo \n" +
+	"  2   100%    2.01 GB  Done       180.0     0.0    0.0  Seeding      Wedding photos \n" +
+	"Sum:           3.60 GB             180.0     0.0"
+
 var TRANSMISSION_BODY_PARSER = regexp.MustCompile(TRANSMISSION_BODY_EXPRESSION)
 
 type TorrentServer struct {
@@ -63,9 +69,10 @@ func getTorrentStatus(transmissionOutput string) []*pb.TorrentStatus {
         }
     }()
     outputLines := strings.Split(transmissionOutput, "\n")
-    fmt.Println(outputLines)
+    fmt.Printf("%+v\n", outputLines)
+    fmt.Println(len(outputLines))
     if len(outputLines) > 2 {
-        outputLines = outputLines[1:len(outputLines)-2]
+        outputLines = outputLines[1:len(outputLines)-1]
     } else {
         return nil
     }
@@ -103,6 +110,12 @@ func (t *TorrentServer) GetStatus(context.Context, *pb.GetStatusRequest) (*pb.Ge
 	cmd := fmt.Sprintf("transmission-remote %s -l",  os.Getenv("TRANSMISSION_HOST"))
 	if t.IsDryRun {
 		fmt.Println("DRYRUN: " + cmd)
+
+		torrents := getTorrentStatus(testOutput)
+
+		return &pb.GetStatusResponse{
+			Torrents: torrents,
+		}, nil
 	} else {
 		fmt.Println("RUNNING: " + cmd)
 
@@ -111,12 +124,13 @@ func (t *TorrentServer) GetStatus(context.Context, *pb.GetStatusRequest) (*pb.Ge
 		if err != nil{
 			fmt.Println(err.Error())
 		}
+		torrents := getTorrentStatus(string(output))
+		return &pb.GetStatusResponse{
+			Torrents: torrents,
+		}, nil
 
-        torrents := getTorrentStatus(string(output))
-        return &pb.GetStatusResponse{
-            Torrents: torrents,
-        }, nil
 
 	}
+
 	return &pb.GetStatusResponse{}, nil
 }
