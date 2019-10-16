@@ -6,7 +6,6 @@ require('dotenv').config()
 const Item = ({showList, download, setIsListExpanded, setIndexOfExpanded, isExpanded, index})  => {
 
   useEffect(()=> {
-    const regex = /(.*) ([12][09]\d\d)[ \n]/;
     let stringVal = download.Name;
     console.log(stringVal);
     stringVal = stringVal.replace(/\./g,' ')
