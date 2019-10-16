@@ -28,6 +28,9 @@ const Item = ({showList, download, setIsListExpanded, setIndexOfExpanded, isExpa
     getPoster("https://api.themoviedb.org/3/search/movie?api_key="+ process.env.REACT_APP_MOVIE_KEY +"&query="+(stringVal.replace(/ /g,"%20")))
     
     setName(stringVal)
+    setProgress(parseInt(download.Done.slice(0,download.Done.length-1)));
+    setDoneSize(download.Have);
+    setStatus(download.Status);
   }, [download])
 
   const [name, setName] = useState("It: Chapter 2");
@@ -35,10 +38,9 @@ const Item = ({showList, download, setIsListExpanded, setIndexOfExpanded, isExpa
   const [description, setDescription] = useState("");
   const [youtubeId, setYoutubeId] = useState("");
   const [voteAverage, setVoteAverage] = useState(0.0);
-
-  let size = 700.0;
-  let doneSize = 254.2;
-  let status = "Downloading";
+  const [progress, setProgress] = useState(0);
+  const [doneSize, setDoneSize] = useState("0 kb");
+  const [status, setStatus] = useState("N/A");
 
   const getTrailerLink = async(movieId) => {
     const api_call = await fetch("http://api.themoviedb.org/3/movie/"+movieId+"/videos?api_key="+process.env.REACT_APP_MOVIE_KEY)
@@ -68,8 +70,8 @@ const Item = ({showList, download, setIsListExpanded, setIndexOfExpanded, isExpa
           {/* <Size>{size.toFixed(1)}MB</Size>*/}
           <Bottom showList={showList}>
             <div>{status}</div>
-            <Percentage>({((doneSize/size)*100).toFixed(2)}%)</Percentage>
-            <ProgressBar percent={((doneSize/size)*100).toFixed(2)}>
+            <Percentage>({(progress).toFixed(2)}%, {doneSize})</Percentage>
+            <ProgressBar percent={(progress).toFixed(2)}>
                 <div></div>
             </ProgressBar>
           </Bottom>
