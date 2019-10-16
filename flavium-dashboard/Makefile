@@ -9,6 +9,7 @@ build: build-container
 		--user $(shell id -u):$(shell id -g) \
 		-v $(mkfile_dir):/tmp/app-dir/ \
 		-w /tmp/app-dir \
+		--env REACT_APP_MOVIE_KEY=${REACT_APP_MOVIE_KEY} \
 		flavium/dashboard:build-1.0 \
 		ash -c "npm install && npm run build"
 
