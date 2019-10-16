@@ -1,4 +1,4 @@
-import React,{ useState } from 'react';
+import React,{ useState, useEffect } from 'react';
 import './App.css';
 import Header from "./components/Header"
 import Input from "./components/Input"
@@ -14,7 +14,7 @@ const GlobalStyles = createGlobalStyle`
 
 function App() {
     const [signedIn, setSignedIn] = useState(false);
-    const [torrentPosted, setTorrentPosted] = useState(false);
+    const [postEvent, setPostEvent] = useState(false);
 
     const authenticate = () => {
         fetch("http://localhost:8080/auth", {
@@ -32,21 +32,23 @@ function App() {
             }
         );
     };
-    const onTorrentPost = (result) => {
+    const onPostEvent = (result) => {
         if(result.ok){
-            setTorrentPosted(!torrentPosted);
+            setPostEvent(!postEvent);
         }
-    }
+    };
 
-    authenticate();
+    useEffect(() => {
+        authenticate();
+    });
     
     if (signedIn) {
       return (
         <div className="App">
             <GlobalStyles/>
             <Header/>
-            <Input onPost={onTorrentPost}/>
-            <DownloadList postListener={torrentPosted}/>
+            <Input onPost={onPostEvent}/>
+            <DownloadList postListener={postEvent}/>
         </div>
       );
     }else {

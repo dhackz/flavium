@@ -17,7 +17,6 @@ const DownloadList = ({postListener}) => {
   },[postListener]);
 
   const fetchData = async () => {
-    //TODO: Get real current downloads instead of mock data
       const result = await fetch("http://localhost:8080/v1/torrent", {
           method: 'GET',
           credentials: 'include',
@@ -26,7 +25,6 @@ const DownloadList = ({postListener}) => {
           },
       });
       const json = await result.json()
-      console.log(json)
       await setDownloads(json.torrents);
   }
 
