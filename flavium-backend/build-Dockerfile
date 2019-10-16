@@ -39,3 +39,4 @@ RUN echo 'export PATH="$PATH:$GOPATH/bin"' >> /home/$UNAME/profile
 USER root
 COPY install_protoc.sh /tmp/install_protoc.sh
 RUN /tmp/install_protoc.sh
+

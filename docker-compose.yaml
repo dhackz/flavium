@@ -37,7 +37,9 @@ services:
     environment: 
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
-    command: /var/www/main
+      - TRANSMISSION_HOST=${TRANSMISSION_HOST}
+    entrypoint: /bin/sh
+    command: -c "/var/www/main --dry_run=true"
     image: flavium/backend
     ports:
       - 8080:8080
@@ -66,9 +68,9 @@ services:
       - PGID=1000
       - TZ=Europe/London
     volumes:
-      - transmission-config:/config
-      - transmission-downloads:/downloads
-      - transmission-watch:/watch
+      - ./transmission/config:/config
+      - ./transmission/downloads:/downloads
+      - ./transmission/watch:/watch
     ports:
       - 9091:9091
       - 51413:51413

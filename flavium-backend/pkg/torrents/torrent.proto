@@ -33,10 +33,13 @@ message GetStatusResponse {
 }
 
 message TorrentStatus {
-	string magnetLink = 1;
-	float size = 2;
-	float doneSize = 3;
-	string status = 4;
-	bool started = 5;
-
+	string Id = 1;
+    string Done = 2;
+    string Have = 3;
+    string Eta = 4;
+    string Up = 5;
+    string Down = 6;
+    string Result = 7;
+    string Status = 8;
+    string Name = 9;
 }
