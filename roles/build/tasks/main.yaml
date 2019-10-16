@@ -1,0 +1,3 @@
+- name: Build everything
+  make:
+    chdir: "{{ zuul.project.src_dir }}"
