@@ -6,6 +6,7 @@ GOOGLE_CLIENT_ID=googleid
 GOOGLE_CLIENT_SECRET=googlesecret
 TRANSMISSION_HOST=transmission
 REACT_APP_MOVIE_KEY=secret-key
+APPROVED_EMAILS=example@gmail.com,example2@gmail.com
 ```
 
 ### Transmission cli
