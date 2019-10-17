@@ -1,4 +1,4 @@
 - project:
     check:
       jobs:
-        - build
+        - build-backend
