@@ -1,7 +1,7 @@
 package server
 
 import (
-	pb "../torrents"
+	pb "github.com/dhackz/flavium/flavium-backend/torrents"
 	"context"
 	"fmt"
 	"os"

@@ -23,18 +23,13 @@ ENV GOPATH=/tmp/go
 
 USER $UNAME
 
-RUN go get -u -insecure google.golang.org/grpc
+RUN echo 'export GOPATH=/tmp/go' >> /home/$UNAME/profile 
+RUN echo 'export PATH="$PATH:$GOPATH/bin"' >> /home/$UNAME/profile
 
 RUN go get -u -insecure github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway
 RUN go get -u -insecure github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
 RUN go get -u -insecure github.com/golang/protobuf/protoc-gen-go
-
-RUN go get -u -insecure golang.org/x/oauth2
-
 RUN go get -u -insecure cloud.google.com/go/compute/metadata
-
-RUN echo 'export GOPATH=/tmp/go' >> /home/$UNAME/profile 
-RUN echo 'export PATH="$PATH:$GOPATH/bin"' >> /home/$UNAME/profile
 
 USER root
 COPY install_protoc.sh /tmp/install_protoc.sh

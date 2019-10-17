@@ -1,8 +1,8 @@
 package main
 
 import (
-	"../server"
-	pb "../torrents"
+	"github.com/dhackz/flavium/flavium-backend/server"
+	pb "github.com/dhackz/flavium/flavium-backend/torrents"
 	"context"
 	"encoding/json"
 	"flag"
