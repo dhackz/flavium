@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-    "regexp"
-    "strings"
+	"regexp"
+	"strings"
 	"time"
 )
 
@@ -150,9 +150,43 @@ func ScheduleTorrentListener(delay time.Duration) {
 			torrents := getTorrentStatus(string(output))
 			for i := range torrents {
 				if torrentIsFinished(*torrents[i]) {
-					_, err := exec.Command("transmission-remote", os.Getenv("TRANSMISSION_HOST"), "--torrent", torrents[i].Id, "--remove").Output()
+					// copy file to tmp
+					safeName := strings.ReplaceAll(torrents[i].Name, " ", `\ `)
+					safeName = strings.ReplaceAll(safeName, "(", `\(`)
+					safeName = strings.ReplaceAll(safeName, ")", `\)`)
+					safeName = strings.ReplaceAll(safeName, "[", `\[`)
+					safeName = strings.ReplaceAll(safeName, "]", `\]`)
+					fmt.Println(safeName)
+					cmd := exec.Command("cp", "-r", `"/var/lib/flavium/downloads/complete/`+torrents[i].Name+`"`, "/tmp")
+					// Manually set the command line arguments so they are not escaped
+					for _, v := range cmd.Args {
+						fmt.Println(v)
+					}
+					fmt.Println(cmd.String())
+					output, err = cmd.CombinedOutput()
+					fmt.Println(string(output))
 					if err != nil{
-						fmt.Println(err.Error())
+						fmt.Printf("Copy failed: %v\n", err)
+					}else{
+					// run filebot
+					output, err := exec.Command("filebot", "-rename", "/tmp/"+safeName).Output()
+					fmt.Printf("Filebot ouput '%s'", output)
+					if err != nil{
+						fmt.Printf("Filebot failed: %v\n", err)
+					}else{
+						//check if movie or series
+						// move to plex
+						err = exec.Command("mv", "/tmp/"+safeName, "/var/lib/plex/data").Run()
+						if err != nil{
+							fmt.Printf("Move failed: %v\n", err)
+						} else {
+							// remove torrent and delete data
+							err := exec.Command("transmission-remote", os.Getenv("TRANSMISSION_HOST"), "--torrent", torrents[i].Id, "--remove-and-delete").Run()
+							if err != nil{
+								fmt.Println(err.Error())
+							}
+						}
+					}
 					}
 				}
 			}

@@ -39,12 +39,14 @@ services:
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
       - TRANSMISSION_HOST=${TRANSMISSION_HOST}
     entrypoint: /bin/sh
-    command: -c "/var/www/main --dry_run=true"
+    command: -c "/var/www/main --dry_run=false"
     image: flavium/backend
     ports:
       - 8080:8080
     volumes:
       - "backend-storage:/var/lib/flavium"
+      - transmission-downloads:/var/lib/flavium/downloads
+      - ./data:/var/lib/plex/data
   db:
     build:
       context: flavium-db
@@ -69,7 +71,7 @@ services:
       - TZ=Europe/London
     volumes:
       - ./transmission/config:/config
-      - ./transmission/downloads:/downloads
+      - transmission-downloads:/downloads
       - ./transmission/watch:/watch
     ports:
       - 9091:9091
