@@ -25,7 +25,7 @@ const TRANSMISSION_BODY_EXPRESSION = "^\\s+" +
 "\\s+" +
 "(?P<ratio>\\d+.\\d+|None)" +
 "\\s+" +
-"(?P<status>\\w+|(\\w+ & \\w+))" +
+"(?P<status>(Up & Down)|\\w+)" +
 "\\s+" +
 "(?P<name>.+)$"
 
