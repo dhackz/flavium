@@ -1,3 +1,7 @@
 - job:
-    name: build
-    run: playbooks/build.yaml
+    name: build-backend
+    run: playbooks/build-backend.yaml
+    nodeset:
+      nodes:
+        - name: ubuntu-bionic
+          label: ubuntu-bionic-vm

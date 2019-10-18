@@ -1,0 +1,4 @@
+- hosts: all
+  roles:
+    - role: build-backend
+      workdir: "{{ zuul.project.src_dir }}/flavium-backend"
