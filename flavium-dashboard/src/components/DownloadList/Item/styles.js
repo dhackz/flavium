@@ -35,7 +35,7 @@ export const ItemStyle = styled.li`
         'height: 320px;'
     )}}}
     transition: all .2s ease-in-out;
-    @media (min-width: 768px){
+    @media (min-width: 1200px){
         margin-bottom: ${props => props.isExpanded ? "195%" : "0"}
     }
     margin-bottom: ${props => props.isExpanded ? "330%" : "0"}
