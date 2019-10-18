@@ -8,6 +8,7 @@ import (
 	"os/exec"
     "regexp"
     "strings"
+	"time"
 )
 
 const TRANSMISSION_BODY_EXPRESSION = "^\\s+" +
@@ -136,4 +137,30 @@ func (t *TorrentServer) GetStatus(context.Context, *pb.GetStatusRequest) (*pb.Ge
 	}
 
 	return &pb.GetStatusResponse{}, nil
+}
+
+
+func ScheduleTorrentListener(delay time.Duration) {
+	go func() {
+		for {
+			output, err := exec.Command("transmission-remote",os.Getenv("TRANSMISSION_HOST"),"-l").Output()
+			if err != nil{
+				fmt.Println(err.Error())
+			}
+			torrents := getTorrentStatus(string(output))
+			for i := range torrents {
+				if torrentIsFinished(*torrents[i]) {
+					_, err := exec.Command("transmission-remote", os.Getenv("TRANSMISSION_HOST"), "--torrent", torrents[i].Id, "--remove").Output()
+					if err != nil{
+						fmt.Println(err.Error())
+					}
+				}
+			}
+			time.Sleep(delay)
+		}
+	}()
+}
+
+func torrentIsFinished(torrent pb.TorrentStatus) bool {
+	return torrent.Done == "100%" && (torrent.Status == "Finished" || torrent.Status == "Idle" || torrent.Status == "Seeding" || torrent.Status == "Stopped")
 }

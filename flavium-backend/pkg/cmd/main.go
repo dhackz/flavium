@@ -215,6 +215,9 @@ func main(){
 			log.Fatalf("failed to serve: %v", err)
 		}
 	}()
+	if !*dryRun {
+		server.ScheduleTorrentListener(20 * time.Second)
+	}
 
 	flag.Parse()
 	defer glog.Flush()
