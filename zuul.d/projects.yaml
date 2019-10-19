@@ -1,9 +1,9 @@
 - project:
     check:
       jobs:
-        - build-backend
         - build-dashboard
+        - unittest-backend
     gate:
       jobs:
-        - build-backend
         - build-dashboard
+        - unittest-backend
