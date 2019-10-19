@@ -1,0 +1,3 @@
+dependencies:
+    - role: ensure-docker
+    - role: ensure-make
