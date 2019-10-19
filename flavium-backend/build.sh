@@ -1,6 +1,5 @@
 #!/bin/sh
 export PATH=$PATH:$(go env GOPATH)/bin
-go mod download
 protoc -I/usr/local/include -I. \
     -I$(go env GOPATH)/src \
     -I$(go env GOPATH)/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis \
