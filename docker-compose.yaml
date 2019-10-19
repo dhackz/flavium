@@ -38,6 +38,7 @@ services:
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
       - TRANSMISSION_HOST=${TRANSMISSION_HOST}
+      - APPROVED_EMAILS=${APPROVED_EMAILS}
     entrypoint: /bin/sh
     command: -c "/var/www/main --dry_run=false"
     image: flavium/backend
