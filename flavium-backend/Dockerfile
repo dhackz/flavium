@@ -1,13 +1,12 @@
-FROM anapsix/alpine-java
+FROM alpine:3.10
 RUN apk add --update \
     transmission-cli \
     curl \
-    rsync
+    rsync \
+    openjdk8
 
-COPY tar.sh /tmp/tar.sh
-RUN /tmp/tar.sh
-
-COPY .filebot.sm /tmp/filebot.sm
+COPY install_filebot.sh /tmp/install_filebot.sh
+RUN /tmp/install_filebot.sh && rm /tmp/install_filebot.sh
 
 COPY main /var/www/main
 COPY .filebot.sm /tmp/.filebot.sm

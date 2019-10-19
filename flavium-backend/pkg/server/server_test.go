@@ -1,7 +1,7 @@
 package server
 
 import (
-	pb "../torrents"
+	pb "flavium-backend/pkg/torrents"
 	"reflect"
 	"testing"
 )
