@@ -1,0 +1,10 @@
+- name: Add golang backports repo
+  apt_repository:
+    repo: ppa:longsleep/golang-backports
+  become: true
+
+- name: Install go
+  apt:
+    name: golang-go
+    update_cache: yes
+  become: true
