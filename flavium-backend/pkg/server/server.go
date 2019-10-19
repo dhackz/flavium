@@ -1,13 +1,14 @@
 package server
 
 import (
-	pb "../torrents"
+	pb "flavium-backend/pkg/torrents"
 	"context"
 	"fmt"
 	"os"
 	"os/exec"
-    "regexp"
-    "strings"
+	"regexp"
+	"strings"
+	"time"
 )
 
 const TRANSMISSION_BODY_EXPRESSION = "^\\s+" +
@@ -29,13 +30,6 @@ const TRANSMISSION_BODY_EXPRESSION = "^\\s+" +
 "\\s+" +
 "(?P<name>.+)$"
 
-const testOutput = "ID     Done       Have  ETA           Up    Down  Ratio  Status       Name \n" +
-	"   1   100%    1.59 GB  Done         0.0     0.0    0.6  Idle         My day at the zoo \n" +
-	"   2   100%    2.01 GB  Done       180.0     0.0    0.0  Seeding      Wedding photos \n" +
-	"   3    93%    2.11 GB  23 sec       0.0  6819.0    0.0  Downloading  Long name of video with S[p]e.ci#al Ch^a.rs}{ \n" +
-	"   4    n/a       None  Unknown      0.0     0.0   None  Downloading  Long+name+with+pluses+for+some+reason\n" +
-	"   5    88%    1.48 GB  31 sec       0.0  6008.0    0.0  Up & Down    Up and down torrent\n" +
-	"Sum:           3.60 GB             180.0     0.0\n"
 
 var TRANSMISSION_BODY_PARSER = regexp.MustCompile(TRANSMISSION_BODY_EXPRESSION)
 
@@ -113,12 +107,7 @@ func (t *TorrentServer) GetStatus(context.Context, *pb.GetStatusRequest) (*pb.Ge
 	cmd := fmt.Sprintf("transmission-remote %s -l",  os.Getenv("TRANSMISSION_HOST"))
 	if t.IsDryRun {
 		fmt.Println("DRYRUN: " + cmd)
-
-		torrents := getTorrentStatus(testOutput)
-
-		return &pb.GetStatusResponse{
-			Torrents: torrents,
-		}, nil
+		return &pb.GetStatusResponse{}, nil
 	} else {
 		fmt.Println("RUNNING: " + cmd)
 
@@ -136,4 +125,50 @@ func (t *TorrentServer) GetStatus(context.Context, *pb.GetStatusRequest) (*pb.Ge
 	}
 
 	return &pb.GetStatusResponse{}, nil
+}
+
+
+func ScheduleTorrentListener(delay time.Duration) {
+	go func() {
+		for {
+			output, err := exec.Command("transmission-remote",os.Getenv("TRANSMISSION_HOST"),"-l").Output()
+			if err != nil{
+				fmt.Println(err.Error())
+			}
+			torrents := getTorrentStatus(string(output))
+			for i := range torrents {
+				if torrentIsFinished(*torrents[i]) {
+					err := exec.Command("rsync", "-r", "/var/lib/flavium/downloads/complete/"+torrents[i].Name, "/tmp").Run()
+					if err != nil{
+						fmt.Printf("Copy failed: %v\n", err)
+					}else{
+					// run filebot
+					output, err := exec.Command("filebot", "-rename", "/tmp/"+torrents[i].Name).Output()
+					fmt.Printf("Filebot ouput '%s'", output)
+					if err != nil{
+						fmt.Printf("Filebot failed: %v\n", err)
+					}else{
+						//check if movie or series
+						// move to plex
+						err = exec.Command("mv", "/tmp/"+torrents[i].Name, "/var/lib/plex/data").Run()
+						if err != nil{
+							fmt.Printf("Move failed: %v\n", err)
+						} else {
+							// remove torrent and delete data
+							err := exec.Command("transmission-remote", os.Getenv("TRANSMISSION_HOST"), "--torrent", torrents[i].Id, "--remove-and-delete").Run()
+							if err != nil{
+								fmt.Println(err.Error())
+							}
+						}
+					}
+					}
+				}
+			}
+			time.Sleep(delay)
+		}
+	}()
+}
+
+func torrentIsFinished(torrent pb.TorrentStatus) bool {
+	return torrent.Done == "100%" && (torrent.Status == "Finished" || torrent.Status == "Idle" || torrent.Status == "Seeding" || torrent.Status == "Stopped")
 }

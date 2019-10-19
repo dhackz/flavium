@@ -1,29 +1,26 @@
 package main
 
 import (
-	"../server"
-	pb "../torrents"
+	"flavium-backend/pkg/session"
+	"flavium-backend/pkg/server"
+	pb "flavium-backend/pkg/torrents"
 	"context"
-	"encoding/json"
 	"flag"
 	"fmt"
 	"github.com/golang/glog"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
-	"golang.org/x/oauth2"
-	"golang.org/x/oauth2/google"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
-	"io/ioutil"
 	"log"
 	"net"
 	"net/http"
-	"os"
 	"strings"
 	"time"
 )
 
 const (
 	grpcPort = "10000"
+	COOKIE_NAME = "sessioncookie"
 )
 
 var (
@@ -32,9 +29,7 @@ var (
 
 	dryRun = flag.Bool("dry_run", false, "Print commands instead of running them")
 
-	oauthStateString = "pseudo-random"
-
-	googleOauthConfig *oauth2.Config
+	authServer = session.NewServer(*dryRun)
 )
 
 func newGateway(ctx context.Context, opts ...runtime.ServeMuxOption) (http.Handler, error) {
@@ -78,14 +73,16 @@ func allowCORS(h http.Handler) http.Handler {
 			}
 		}
 		if r.URL.Path != "/login" && r.URL.Path != "/callback" {
-			state, err := r.Cookie("oauthstate")
+			secret, err := r.Cookie(COOKIE_NAME)
 			if err != nil {
 				fmt.Println(err.Error())
 				http.Redirect(w,r,"/401", http.StatusUnauthorized)
 				return
 			}
-			if state.Value != oauthStateString {
+			if !authServer.ValidateSecret(secret.Value) {
 				fmt.Println("User not authenticated")
+				cookie := http.Cookie{Name: COOKIE_NAME, Value: "", MaxAge: 0, Expires: time.Now(), Path: "/"}
+				http.SetCookie(w, &cookie)
 				http.Redirect(w,r,"/401", http.StatusUnauthorized)
 				return
 			}
@@ -95,14 +92,6 @@ func allowCORS(h http.Handler) http.Handler {
 }
 
 func Run(address string, opts ...runtime.ServeMuxOption) error {
-	googleOauthConfig = &oauth2.Config{
-		RedirectURL:  "http://localhost:8080/callback",
-		ClientID:     os.Getenv("GOOGLE_CLIENT_ID"),
-		ClientSecret: os.Getenv("GOOGLE_CLIENT_SECRET"),
-		Scopes:       []string{"https://www.googleapis.com/auth/userinfo.email"},
-		Endpoint:     google.Endpoint,
-	}
-
 	ctx := context.Background()
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
@@ -119,18 +108,19 @@ func Run(address string, opts ...runtime.ServeMuxOption) error {
 	mux.Handle("/", gw)
 
 	return http.ListenAndServe(address, allowCORS(mux))
-
 }
 
 func handleAuth(w http.ResponseWriter, r *http.Request) {
-	state, err := r.Cookie("oauthstate")
+	secret, err := r.Cookie(COOKIE_NAME)
 	if err != nil {
 		fmt.Println(err.Error())
 		http.Redirect(w,r,"/401", http.StatusUnauthorized)
 		return
 	}
-	if state.Value != oauthStateString {
-		fmt.Println("User not authenticated")
+	if !authServer.ValidateSecret(secret.Value) {
+		fmt.Println("Cookie not valid, sign in again")
+		cookie := http.Cookie{Name: COOKIE_NAME, Value: "", MaxAge: 0, Expires: time.Now(), Path: "/"}
+		http.SetCookie(w, &cookie)
 		http.Redirect(w,r,"/401", http.StatusUnauthorized)
 		return
 	}
@@ -139,66 +129,27 @@ func handleAuth(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleGoogleLogin(w http.ResponseWriter, r *http.Request) {
-	url := googleOauthConfig.AuthCodeURL(oauthStateString)
+	url := authServer.GenerateSession()
 	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
 }
 
 func handleGoogleCallback(w http.ResponseWriter, r *http.Request) {
-	user, err := extractUser(r.FormValue("state"), r.FormValue("code"))
-	if err != nil {
-		http.Redirect(w,r,"/", http.StatusTemporaryRedirect)
-		return
-	}
-	//TODO(Vilddjur): fetch list of approved emails
-	if user.Email == "approvedemail@gmail.com" {
-		storeCookie(w, r.FormValue("state"))
+	if secret, err := authServer.AuthenticateUser(r.FormValue("state"), r.FormValue("code")); err == nil {
+		storeCookie(w, secret)
 		http.Redirect(w,r,"http://localhost/", http.StatusTemporaryRedirect)
 		return
 	} else {
-		fmt.Println("User not approved")
+		fmt.Printf("Authentication failed: %s\n", err.Error())
 		http.Redirect(w,r,"/", http.StatusUnauthorized)
 		return
 	}
 }
 
 func storeCookie(w http.ResponseWriter, state string) {
-	var expiration = time.Now().Add(365 * 24 * time.Hour)
+	var expiration = time.Now().Add(12 * time.Hour)
 
-	cookie := http.Cookie{Name: "oauthstate", Value: state, Expires: expiration, Path: "/"}
+	cookie := http.Cookie{Name: COOKIE_NAME, Value: state, Expires: expiration, Path: "/"}
 	http.SetCookie(w, &cookie)
-}
-
-type User struct {
-	Id string `json:"id"`
-	Email string `json:"email"`
-	VerifiedEmail bool `json:"verified_email"`
-	Picture string `json:"picture"`
-}
-
-func extractUser(state string, code string) (User, error) {
-	user := User{}
-	if state != oauthStateString {
-		return user, fmt.Errorf("invalid oauth state")
-	}
-	token, err := googleOauthConfig.Exchange(context.Background(), code)
-	if err != nil {
-		return user, fmt.Errorf("code exchange failed: %s", err.Error())
-	}
-	response, err := http.Get("https://www.googleapis.com/oauth2/v2/userinfo?access_token=" + token.AccessToken)
-	if err != nil {
-		return user, fmt.Errorf("failed getting user info: %s", err.Error())
-	}
-	defer response.Body.Close()
-	contents, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		return user, fmt.Errorf("failed reading response body: %s", err.Error())
-	}
-
-	err = json.Unmarshal(contents, &user)
-	if err != nil {
-		return user, fmt.Errorf("failed reading response body: %s", err.Error())
-	}
-	return user, nil
 }
 
 func main(){
@@ -215,6 +166,9 @@ func main(){
 			log.Fatalf("failed to serve: %v", err)
 		}
 	}()
+	if !*dryRun {
+		server.ScheduleTorrentListener(20 * time.Second)
+	}
 
 	flag.Parse()
 	defer glog.Flush()

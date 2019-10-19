@@ -1,0 +1,4 @@
+docker_packages:
+  - containerd.io_1.2.6-3_amd64.deb
+  - docker-ce-cli_18.09.9~3-0~ubuntu-bionic_amd64.deb
+  - docker-ce_18.09.9~3-0~ubuntu-bionic_amd64.deb 

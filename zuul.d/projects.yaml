@@ -1,0 +1,10 @@
+- project:
+    merge-mode: squash-merge
+    check:
+      jobs:
+        - build-backend
+        - build-dashboard
+    gate:
+      jobs:
+        - build-backend
+        - build-dashboard
