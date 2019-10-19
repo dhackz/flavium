@@ -42,7 +42,7 @@ const DownloadList = ({postListener}) => {
         <Toggle setShowList={setShowList} showList={showList}/>
       </Header>
       {itemColumns}
-      <ListStyle showList={showList}>
+      {currentDownloads && <ListStyle showList={showList}>
           {currentDownloads.map((item,key) => {
               let isExpanded = false;
               if(isListExpanded && key===indexOfExpanded){
@@ -60,7 +60,7 @@ const DownloadList = ({postListener}) => {
                 />
               );
             })}
-      </ListStyle>
+      </ListStyle>}
     </div>
   )
 };
