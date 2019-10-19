@@ -3,6 +3,8 @@
     check:
       jobs:
         - build-backend
+        - build-dashboard
     gate:
       jobs:
         - build-backend
+        - build-dashboard
