@@ -14,6 +14,7 @@ export const ItemContainer = styled.div`
         transform: scale(1.1);
 
     }
+    position: relative;
 `;
 
 export const ItemStyle = styled.li`
@@ -50,13 +51,11 @@ export const ProgressBar = styled.div`
 
     background-color: black;
     border-radius: 13px;
-    /* (height of inner div) / 2 + padding */
     padding: 4px;
 
     div{
         background-color: orange;
         width: ${props => props.percent}%;
-        /* Adjust with JavaScript */
         height: 12px;
         border-radius: 10px;
     }
@@ -81,7 +80,7 @@ export const Percentage = styled.div`
 `;
 
 export const Bottom = styled.div`
-    position:  ${props => props.showList ? "static" : "relative"};
-    bottom:  ${props => props.showList ? "0px" : "-200px"};
-
+    position:  ${props => props.showList ? "static" : "absolute"};
+    bottom:  0px;
+    left: 0; right: 0;
 `;
