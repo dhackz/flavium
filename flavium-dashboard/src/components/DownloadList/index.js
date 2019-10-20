@@ -1,9 +1,8 @@
 import React, {useState, useEffect} from 'react';
-import { ListStyle, LargeText, Header} from "./styles"
+import { ListStyle, LargeText, Header, RefreshButton, Image} from "./styles"
 import Item from "./Item"
 import ItemColumns from "./ItemColumns"
 import Toggle from "./Toggle"
-import {StyledButton} from "../Input/styles";
 
 const DownloadList = ({postListener}) => {
   
@@ -38,7 +37,7 @@ const DownloadList = ({postListener}) => {
     <div>
       <Header>
         <LargeText>Currently downloading:</LargeText>
-          <StyledButton onClick={fetchData}>Reload</StyledButton>
+        <RefreshButton onClick={fetchData}><Image src="./refresh.png" selected={!showList} /></RefreshButton>
         <Toggle setShowList={setShowList} showList={showList}/>
       </Header>
       {itemColumns}

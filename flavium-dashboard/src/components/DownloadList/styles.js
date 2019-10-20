@@ -74,3 +74,27 @@ export const ItemStyle = styled.li`
     border-bottom: 1px solid rgba(35,42,42, 1);
     background-image: linear-gradient(to right, #404a4a, #43413c);
 `;
+
+export const RefreshButton = styled.button`
+    margin-right:24px;
+    line-height: 50px;
+    text-align: center;
+    vertical-align: middle;
+    height: 50px;
+    margin-bottom 10px;
+    background-color: #cc7b19;
+    border: none;
+    color: white;
+    font-family: 'Raleway', sans-serif;
+    &:hover{
+        background-color: #8a571b;
+    }
+    border-radius: 50%;
+`;
+
+export const Image = styled.img`
+    padding-top: 5px;
+    width: 40px;
+    height: 40px;
+    filter: brightness(0) invert(1);
+`;
