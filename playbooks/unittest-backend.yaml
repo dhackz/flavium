@@ -2,6 +2,7 @@
   roles:
     - role: build-backend
       workdir: "{{ zuul.project.src_dir }}/flavium-backend"
+      make_target: "gen"
     - role: go-test
       workdir: "{{ zuul.project.src_dir }}/flavium-backend"
       testdir: "./pkg/..."
