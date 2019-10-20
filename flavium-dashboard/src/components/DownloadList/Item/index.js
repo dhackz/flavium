@@ -15,7 +15,7 @@ const Item = ({showList, download, setIsListExpanded, setIndexOfExpanded, isExpa
     const getPoster = async(url) => {
       const api_call = await fetch(url);
       const data = await api_call.json();
-      if(data.results){
+      if(data.results && data.results[0]){
         setPosterSrc("http://image.tmdb.org/t/p/w200//" +data.results[0].poster_path);
         setDescription(data.results[0].overview)
         setVoteAverage(data.results[0].vote_average)
@@ -43,7 +43,9 @@ const Item = ({showList, download, setIsListExpanded, setIndexOfExpanded, isExpa
   const getTrailerLink = async(movieId) => {
     const api_call = await fetch("http://api.themoviedb.org/3/movie/"+movieId+"/videos?api_key="+process.env.REACT_APP_MOVIE_KEY)
     const data = await api_call.json();
-    setYoutubeId(data.results[0].key)
+    if(data.results[0]){
+      setYoutubeId(data.results[0].key)
+    }
   }
 
   let details = null;
