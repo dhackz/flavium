@@ -80,9 +80,7 @@ export const Percentage = styled.div`
 `;
 
 export const Bottom = styled.div`
-    position:  ${props => props.showList ? "static" : "relative"};
-    bottom:  ${props => props.showList ? "0px" : "-200px"};
-    position: absolute;
-    bottom: 0px;
+    position:  ${props => props.showList ? "static" : "absolute"};
+    bottom:  0px;
     left: 0; right: 0;
 `;
