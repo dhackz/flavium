@@ -1,6 +1,6 @@
 - job:
-    name: build-backend
-    run: playbooks/build-backend.yaml
+    name: unittest-backend
+    run: playbooks/unittest-backend.yaml
     nodeset:
       nodes:
         - name: ubuntu-bionic
