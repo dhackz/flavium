@@ -10,9 +10,9 @@ import (
 )
 
 const (
-	head = "ID     Done       Have  ETA           Up    Down  Ratio  Status       Name \n"
-	tail = "Sum:           3.60 GB             180.0     0.0\n"
- 	body =
+	transmissionListHead = "ID     Done       Have  ETA           Up    Down  Ratio  Status       Name \n"
+	transmissionListTail = "Sum:           3.60 GB             180.0     0.0\n"
+ 	transmissionListBody =
 	"   1   100%    1.59 GB  Done         0.0     0.0    0.6  Idle         My day at the zoo\n" +
 	"   2   100%    2.01 GB  Done       180.0     0.0    0.0  Seeding      Wedding photos\n" +
 	"   3    93%    2.11 GB  23 sec       0.0  6819.0    0.0  Downloading  Long name of video with S[p]e.ci#al Ch^a.rs}{ \n" +
@@ -21,7 +21,7 @@ const (
 )
 
 var (
-	expectedResults = []*pb.TorrentStatus {
+	expectedTorrentResults = []*pb.TorrentStatus {
 		{
 			Id:     "1",
 			Done:   "100%",
@@ -77,10 +77,10 @@ var (
 )
 
 func TestRegex(t *testing.T) {
-	testOutput := head + body + tail
+	testOutput := transmissionListHead + transmissionListBody + transmissionListTail
 	result := parseTorrentStatusOutput(testOutput)
 	for i := range expectedResults {
-		if reflect.DeepEqual(result, expectedResults) {
+		if reflect.DeepEqual(result, expectedTorrentResults) {
 			t.Errorf("Test case #%d failed", i)
 		}
 	}
@@ -92,7 +92,7 @@ func TestGetTorrentStatus(t *testing.T) {
     torrentServer := TorrentServer{IsDryRun: false}
     result := torrentServer.GetTorrentStatus()
 	for i := range expectedResults {
-		if reflect.DeepEqual(result, expectedResults) {
+		if reflect.DeepEqual(result, expectedTorrentResults) {
 			t.Errorf("Test case #%d failed", i)
 		}
 	}
@@ -110,7 +110,7 @@ func TestHelperGetTorrentStatus(t *testing.T) {
     if os.Getenv("GO_WANT_HELPER_PROCESS") != "1" {
         return
     }
-	testOutput := head + body + tail
+	testOutput := transmissionListHead + transmissionListBody + transmissionListTail
     fmt.Fprintf(os.Stdout, testOutput)
     os.Exit(0)
 }
