@@ -29,17 +29,17 @@ var (
 			Eta:    "Done",
 			Up:     "0.0",
 			Down:   "0.0",
-			Result: "0.6",
+			Ratio: "0.6",
 			Status: "Idle",
 			Name:   "My day at the zoo",
 		}, {
 			Id:     "2",
 			Done:   "100%",
-			Have:   "2.01 G",
+			Have:   "2.01 GB",
 			Eta:    "Done",
 			Up:     "180.0",
 			Down:   "0.0",
-			Result: "Seeding",
+			Ratio:  "0.0",
 			Status: "Seeding",
 			Name:   "Wedding photos",
 		}, {
@@ -49,7 +49,7 @@ var (
 			Eta:    "23 sec",
 			Up:     "0.0",
 			Down:   "6819.0",
-			Result: "0.0",
+			Ratio: "0.0",
 			Status: "Downloading",
 			Name:   "Long name of video with S[p]e.ci#al Ch^a.rs}{ ",
 		}, {
@@ -59,7 +59,7 @@ var (
 			Eta:    "Unknown",
 			Up:     "0.0",
 			Down:   "0.0",
-			Result: "None",
+			Ratio: "None",
 			Status: "Downloading",
 			Name:   "Long+name+with+pluses+for+some+reason",
 		}, {
@@ -69,48 +69,139 @@ var (
 			Eta:    "31 sec",
 			Up:     "0.0",
 			Down:   "6008.0",
-			Result: "0.0",
+			Ratio: "0.0",
 			Status: "Up & Down",
 			Name:   "Up and down torrent",
 		},
 	}
 )
 
+func assertTorrentStatusEqual(result *pb.TorrentStatus, expected *pb.TorrentStatus, t *testing.T) {
+    if result.Id != expected.Id {
+        t.Errorf("Test case failed")
+        fmt.Println("Got Id:")
+        fmt.Println(result.Id)
+        fmt.Println("Expected Id:")
+        fmt.Println(expected.Id)
+    }
+    if result.Done != expected.Done {
+        t.Errorf("Test case failed")
+        fmt.Println("Got Done:")
+        fmt.Println(result.Done)
+        fmt.Println("Expected Done:")
+        fmt.Println(expected.Done)
+    }
+    if result.Have != expected.Have {
+        t.Errorf("Test case failed")
+        fmt.Println("Got Have:")
+        fmt.Println(result.Have)
+        fmt.Println("Expected Have:")
+        fmt.Println(expected.Have)
+    }
+    if result.Eta != expected.Eta {
+        t.Errorf("Test case failed")
+        fmt.Println("Got Eta:")
+        fmt.Println(result.Eta)
+        fmt.Println("Expected Eta:")
+        fmt.Println(expected.Eta)
+    }
+    if result.Up != expected.Up {
+        t.Errorf("Test case failed")
+        fmt.Println("Got Up:")
+        fmt.Println(result.Up)
+        fmt.Println("Expected Up:")
+        fmt.Println(expected.Up)
+    }
+    if result.Down != expected.Down {
+        t.Errorf("Test case failed")
+        fmt.Println("Got Down:")
+        fmt.Println(result.Down)
+        fmt.Println("Expected Down:")
+        fmt.Println(expected.Down)
+    }
+    if result.Ratio != expected.Ratio {
+        t.Errorf("Test case failed")
+        fmt.Println("Got Ratio:")
+        fmt.Println(result.Ratio)
+        fmt.Println("Expected Ratio:")
+        fmt.Println(expected.Ratio)
+    }
+    if result.Status != expected.Status {
+        t.Errorf("Test case failed")
+        fmt.Println("Got Status:")
+        fmt.Println(result.Status)
+        fmt.Println("Expected Status:")
+        fmt.Println(expected.Status)
+    }
+    if result.Name != expected.Name {
+        t.Errorf("Test case failed")
+        fmt.Println("Got Name:")
+        fmt.Println(result.Name)
+        fmt.Println("Expected Name:")
+        fmt.Println(expected.Name)
+    }
+}
+
 func TestRegex(t *testing.T) {
 	testOutput := transmissionListHead + transmissionListBody + transmissionListTail
 	result := parseTorrentStatusOutput(testOutput)
-	for i := range expectedResults {
-		if reflect.DeepEqual(result, expectedTorrentResults) {
-			t.Errorf("Test case #%d failed", i)
-		}
+	for i := range expectedTorrentResults {
+        fmt.Printf("Test #%d:\n", i)
+        assertTorrentStatusEqual(result[i], expectedTorrentResults[i], t)
 	}
 }
 
 func TestGetTorrentStatus(t *testing.T) {
-    execCommand = fakeExecCommand
+    fakeExec := FakeExecCommand{
+        testTarget: "TestHelperGetTorrentStatus",
+    }
+    execCommand = fakeExec.FakeExecCommand
     defer func() { execCommand = exec.Command }()
+    os.Setenv("TRANSMISSION_HOST", "localhost")
     torrentServer := TorrentServer{IsDryRun: false}
     result := torrentServer.GetTorrentStatus()
-	for i := range expectedResults {
-		if reflect.DeepEqual(result, expectedTorrentResults) {
-			t.Errorf("Test case #%d failed", i)
-		}
+    if len(result) != len(expectedTorrentResults) {
+        t.Errorf(
+            "Test case failed: Too few result Got - %d Expected - %d",
+            len(result),
+            len(expectedTorrentResults),
+        )
+        return
+    }
+	for i := range expectedTorrentResults {
+        assertTorrentStatusEqual(result[i], expectedTorrentResults[i], t)
 	}
-}
-
-func fakeExecCommand(command string, args...string) *exec.Cmd {
-    cs := []string{"-test.run=TestHelperGetTorrentStatus"}
-    cs = append(cs, args...)
-    cmd := exec.Command(os.Args[0], cs...)
-    cmd.Env = []string{"GO_WANT_HELPER_PROCESS=1"}
-    return cmd
 }
 
 func TestHelperGetTorrentStatus(t *testing.T) {
     if os.Getenv("GO_WANT_HELPER_PROCESS") != "1" {
         return
     }
+    expectedArgs := []string {
+        "transmission",
+        "localhost",
+        "-l",
+    }
+    command := os.Args[3:]
+    if reflect.DeepEqual(command, expectedArgs) {
+        // TODO test transmission unexpected arguments
+        // TODO test transmission cannot connect to host
+        os.Exit(1)
+    }
 	testOutput := transmissionListHead + transmissionListBody + transmissionListTail
-    fmt.Fprintf(os.Stdout, testOutput)
+    fmt.Fprint(os.Stdout, testOutput)
     os.Exit(0)
+}
+
+
+type FakeExecCommand struct {
+	testTarget string
+}
+
+func (t *FakeExecCommand) FakeExecCommand(command string, args...string) *exec.Cmd {
+    cs := []string{"-test.run=" + t.testTarget}
+    cs = append(cs, args...)
+    cmd := exec.Command(os.Args[0], cs...)
+    cmd.Env = []string{"GO_WANT_HELPER_PROCESS=1"}
+    return cmd
 }

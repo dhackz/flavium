@@ -68,27 +68,21 @@ func parseTorrentStatusOutput(transmissionOutput string) []*pb.TorrentStatus {
         }
     }()
     outputLines := strings.Split(transmissionOutput, "\n")
-    fmt.Printf("%+v\n", outputLines)
-    fmt.Println(len(outputLines))
     if len(outputLines) > 2 {
         outputLines = outputLines[1:len(outputLines)-2]
     } else {
         return nil
     }
+    fmt.Printf(outputLines[0])
     torrents := make([]*pb.TorrentStatus, len(outputLines))
-    fmt.Println(len(outputLines))
     for i, line := range outputLines {
-        fmt.Printf("Parsing line: \"%s\"\n", line)
         match := TRANSMISSION_BODY_PARSER.FindStringSubmatch(line)
         result := make(map[string]string)
         for j, name := range TRANSMISSION_BODY_PARSER.SubexpNames() {
             if j != 0 && name != "" {
                 result[name] = match[j]
-                fmt.Printf("%s - %s\n", name, result[name])
             }
         }
-        fmt.Println("Adding Id")
-        fmt.Println(len(torrents))
         torrents[i] = &pb.TorrentStatus {
             Id : result["id"],
             Done : result["done"],
@@ -96,7 +90,7 @@ func parseTorrentStatusOutput(transmissionOutput string) []*pb.TorrentStatus {
             Eta : result["eta"],
             Up : result["up"],
             Down : result["down"],
-            Result : result["result"],
+            Ratio : result["ratio"],
             Status : result["status"],
             Name : result["name"],
         }
@@ -115,7 +109,7 @@ func (t *TorrentServer) GetTorrentStatus() []*pb.TorrentStatus {
 
 		output, err := execCommand("transmission-remote",os.Getenv("TRANSMISSION_HOST"),"-l").Output()
         fmt.Printf("CMD output: %s\n", output)
-		if err != nil{
+		if err != nil {
 			fmt.Println(err.Error())
 		}
 		torrents = parseTorrentStatusOutput(string(output))
