@@ -2,8 +2,11 @@ package server
 
 import (
 	pb "flavium-backend/pkg/torrents"
+    "fmt"
 	"reflect"
 	"testing"
+	"os"
+	"os/exec"
 )
 
 const (
@@ -75,10 +78,39 @@ var (
 
 func TestRegex(t *testing.T) {
 	testOutput := head + body + tail
-	result := getTorrentStatus(testOutput)
+	result := parseTorrentStatusOutput(testOutput)
 	for i := range expectedResults {
 		if reflect.DeepEqual(result, expectedResults) {
 			t.Errorf("Test case #%d failed", i)
 		}
 	}
+}
+
+func TestGetTorrentStatus(t *testing.T) {
+    execCommand = fakeExecCommand
+    defer func() { execCommand = exec.Command }()
+    torrentServer := TorrentServer{IsDryRun: false}
+    result := torrentServer.GetTorrentStatus()
+	for i := range expectedResults {
+		if reflect.DeepEqual(result, expectedResults) {
+			t.Errorf("Test case #%d failed", i)
+		}
+	}
+}
+
+func fakeExecCommand(command string, args...string) *exec.Cmd {
+    cs := []string{"-test.run=TestHelperGetTorrentStatus"}
+    cs = append(cs, args...)
+    cmd := exec.Command(os.Args[0], cs...)
+    cmd.Env = []string{"GO_WANT_HELPER_PROCESS=1"}
+    return cmd
+}
+
+func TestHelperGetTorrentStatus(t *testing.T) {
+    if os.Getenv("GO_WANT_HELPER_PROCESS") != "1" {
+        return
+    }
+	testOutput := head + body + tail
+    fmt.Fprintf(os.Stdout, testOutput)
+    os.Exit(0)
 }
