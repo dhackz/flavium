@@ -30,11 +30,11 @@ const TRANSMISSION_BODY_EXPRESSION = "^\\s+" +
 "(?P<name>.+)$"
 
 const testOutput = "ID     Done       Have  ETA           Up    Down  Ratio  Status       Name \n" +
-	"   1   100%    1.59 GB  Done         0.0     0.0    0.6  Idle         My day at the zoo \n" +
-	"   2   100%    2.01 GB  Done       180.0     0.0    0.0  Seeding      Wedding photos \n" +
-	"   3    93%    2.11 GB  23 sec       0.0  6819.0    0.0  Downloading  Long name of video with S[p]e.ci#al Ch^a.rs}{ \n" +
-	"   4    n/a       None  Unknown      0.0     0.0   None  Downloading  Long+name+with+pluses+for+some+reason\n" +
-	"   5    88%    1.48 GB  31 sec       0.0  6008.0    0.0  Up & Down    Up and down torrent\n" +
+	"   1   100%    1.59 GB  Done         0.0     0.0    0.6  Idle         Gigli 2003 \n" +
+	"   2   100%    2.01 GB  Done       180.0     0.0    0.0  Seeding      Gigli 2003 \n" +
+	"   3    93%    2.11 GB  23 sec       0.0  6819.0    0.0  Downloading  Gigli 2003 \n" +
+	"   4    n/a       None  Unknown      0.0     0.0   None  Downloading  Gigli 2003 \n" +
+	"   5    88%    1.48 GB  31 sec       0.0  6008.0    0.0  Up & Down    Gigli 2003 \n" +
 	"Sum:           3.60 GB             180.0     0.0\n"
 
 var TRANSMISSION_BODY_PARSER = regexp.MustCompile(TRANSMISSION_BODY_EXPRESSION)
