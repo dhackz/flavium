@@ -1,0 +1,21 @@
+- name: Download docker packages
+  get_url:
+    url: "https://download.docker.com/linux/ubuntu/dists/bionic/pool/stable/amd64/{{ item }}"
+    dest: "/tmp/{{ item }}"
+  loop: "{{ docker_packages }}"
+
+- name:
+  apt:
+    deb: "/tmp/{{ item }}"
+  become: true
+  loop: "{{ docker_packages }}"
+
+- name: Add current user to Docker group
+  user:
+    name: "{{ ansible_user }}"
+    groups: docker
+    append: yes
+  become: true
+
+- name: Reset connection so docker group takes effect
+  meta: reset_connection

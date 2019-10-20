@@ -29,6 +29,7 @@ const Item = ({showList, download, setIsListExpanded, setIndexOfExpanded, isExpa
         setStatus(download.Status);
       }
     }
+    
     if(download.Name !== undefined){
       const albinsBetterRegex = /^(([a-zA-Z]+) +(& +)?)+/;
       let stringVal = download.Name

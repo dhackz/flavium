@@ -1,0 +1,3 @@
+- name: Build everything
+  debug:
+    msg: No implemented
