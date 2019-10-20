@@ -11,7 +11,7 @@ const Item = ({showList, download, setIsListExpanded, setIndexOfExpanded, isExpa
       setName(stringVal)
       const api_call = await fetch("https://api.themoviedb.org/3/search/movie?api_key="+ process.env.REACT_APP_MOVIE_KEY +"&query="+(stringVal.replace(/ /g,"%20")));
       const data = await api_call.json();
-      if(data.results){
+      if(data.results.length>0){
         setId(data.results[0].id)
         const api_call2 = await fetch("https://api.themoviedb.org/3/movie/"+data.results[0].id+"?api_key="+process.env.REACT_APP_MOVIE_KEY);
         const data2 = await api_call2.json();
@@ -29,12 +29,13 @@ const Item = ({showList, download, setIsListExpanded, setIndexOfExpanded, isExpa
         setStatus(download.Status);
       }
     }
-
-    const albinsBetterRegex = /^(([a-zA-Z]+) +(& +)?)+/;
-    let stringVal = download.Name
-    stringVal = stringVal.replace(/\./g,' ')
-    stringVal = stringVal.match(albinsBetterRegex)[0];
-    fetchDataFromName(stringVal)
+    if(download.Name !== undefined){
+      const albinsBetterRegex = /^(([a-zA-Z]+) +(& +)?)+/;
+      let stringVal = download.Name
+      stringVal = stringVal.replace(/\./g,' ')
+      stringVal = stringVal.match(albinsBetterRegex)[0];
+      fetchDataFromName(stringVal)
+    }
     
   }, [download])
 
@@ -61,12 +62,14 @@ const Item = ({showList, download, setIsListExpanded, setIndexOfExpanded, isExpa
 
   let details = null;
   const handleClick = () => {
-    if(!isExpanded){
-      setIsListExpanded(true)
-      setIndexOfExpanded(index)
-    }else{
-      setIsListExpanded(false);
-      setIndexOfExpanded(null)
+    if(!showList){
+      if(!isExpanded){
+        setIsListExpanded(true)
+        setIndexOfExpanded(index)
+      }else{
+        setIsListExpanded(false);
+        setIndexOfExpanded(null)
+      }
     }
   }
   if(isExpanded){
@@ -89,7 +92,7 @@ const Item = ({showList, download, setIsListExpanded, setIndexOfExpanded, isExpa
         </ItemContainer>
           {details}
       </ItemStyle>
-          </>
+    </>
   );
 };
 

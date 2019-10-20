@@ -12,20 +12,18 @@ const Details = ({name, description, youtubeId, voteAverage, genres, releaseDate
                 <Trailer>
                     <ReactPlayer width="500px" height="350px" url={url} controls={true} playing={false}/>
                 </Trailer>
-                <div>
-                    <Description>
-                        <HorizontalDiv>
-                            <Title><div>{name} ({releaseDate})</div></Title>
-                            <Score>{"IMDb: " + voteAverage}</Score>
-                        </HorizontalDiv>
-                        <HorizontalDiv>
-                            <Genres>{genres.map((genre) => (genre + " "))}</Genres>
-                            <Runtime>{runtime} min</Runtime>
-                        </HorizontalDiv>
-                            <div>Result: ${(revenue-budget).toLocaleString()} <Revenue>(+${revenue.toLocaleString()})</Revenue>/<Budget>(-${budget.toLocaleString()})</Budget></div>
-                        <DescriptionStyle>{description}</DescriptionStyle>
-                    </Description>
-                </div>  
+                <Description>
+                    <HorizontalDiv>
+                        <Title><div>{name} ({releaseDate})</div></Title>
+                        <Score>{"IMDb: " + voteAverage}</Score>
+                    </HorizontalDiv>
+                    <HorizontalDiv>
+                        <Genres>{genres.map((genre) => (genre + " "))}</Genres>
+                        <Runtime>{runtime} min</Runtime>
+                    </HorizontalDiv>
+                        <div>Result: ${(revenue-budget).toLocaleString()} <Revenue>(+${revenue.toLocaleString()})</Revenue>/<Budget>(-${budget.toLocaleString()})</Budget></div>
+                    <DescriptionStyle>{description}</DescriptionStyle>
+                </Description>
             </Grid>
         </DetailsStyle>
     )

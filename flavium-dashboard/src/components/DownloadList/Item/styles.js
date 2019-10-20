@@ -18,7 +18,7 @@ export const ItemContainer = styled.div`
 
 export const ItemStyle = styled.li`
     
-    width: ${props => props.showList ? "100%" : "210px"}
+    width: ${props => props.showList ? "auto" : "210px"}
     color: white;
     list-style: none;
     background: rgba(0, 0, 0, 0.2);
