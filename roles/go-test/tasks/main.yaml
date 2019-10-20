@@ -1,0 +1,4 @@
+- name: Run go unittests
+  command: go test {% if testdir is defined %}'{{ testdir }}'{% endif %}
+  args:
+    chdir: "{{ workdir }}"

@@ -3,6 +3,7 @@ import { ListStyle, LargeText, Header} from "./styles"
 import Item from "./Item"
 import ItemColumns from "./ItemColumns"
 import Toggle from "./Toggle"
+import {StyledButton} from "../Input/styles";
 
 const DownloadList = ({postListener}) => {
   
@@ -36,11 +37,12 @@ const DownloadList = ({postListener}) => {
   return (
     <div>
       <Header>
-        <LargeText>Currently downloading:</LargeText> 
+        <LargeText>Currently downloading:</LargeText>
+          <StyledButton onClick={fetchData}>Reload</StyledButton>
         <Toggle setShowList={setShowList} showList={showList}/>
       </Header>
       {itemColumns}
-      <ListStyle showList={showList}>
+      {currentDownloads && <ListStyle showList={showList}>
           {currentDownloads.map((item,key) => {
               let isExpanded = false;
               if(isListExpanded && key===indexOfExpanded){
@@ -58,7 +60,7 @@ const DownloadList = ({postListener}) => {
                 />
               );
             })}
-      </ListStyle>
+      </ListStyle>}
     </div>
   )
 };
