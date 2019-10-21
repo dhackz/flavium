@@ -13,3 +13,11 @@
       nodes:
         - name: ubuntu-bionic
           label: ubuntu-bionic-vm
+
+- job:
+    name: unittest-frontend
+    run: playbooks/unittest-frontend.yaml
+    nodeset:
+      nodes:
+        - name: ubuntu-bionic
+          label: ubuntu-bionic-vm

@@ -3,7 +3,9 @@
       jobs:
         - build-dashboard
         - unittest-backend
+        - unittest-frontend
     gate:
       jobs:
         - build-dashboard
         - unittest-backend
+        - unittest-frontend
