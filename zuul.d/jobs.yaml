@@ -16,6 +16,7 @@
 
 - job:
     name: unittest-frontend
+    parent: nodejs-npm
     run: playbooks/unittest-frontend.yaml
     nodeset:
       nodes:
