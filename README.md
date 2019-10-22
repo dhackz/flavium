@@ -1,3 +1,7 @@
+# Flavium
+Flavium is a project to automate and simplify downloads, formatting and provisioning of media files. \
+The project should have few requirements to set up to make it easy for the user to install. This is accomplished by using infrastructure as code in the form of dockerfiles. Currently the only requirements for the user are docker, docker-compose and make. Zuul-CI is used to automate tests and make sure that no changes that breaks the system is merged to the master branch.
+
 ## Setup
 ### Env
 This needs to be in your .env:  
