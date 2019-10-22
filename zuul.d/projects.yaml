@@ -4,8 +4,10 @@
         - build-dashboard
         - build-backend
         - unittest-backend
+        - unittest-frontend
     gate:
       jobs:
         - build-dashboard
         - build-backend
         - unittest-backend
+        - unittest-frontend
