@@ -1,4 +1,4 @@
 - name: Run frontend unittests
-  command: npm test {% if testdir is defined %}'{{ testdir }}'{% endif %}
+  command: npm test
   args:
     chdir: "{{ workdir }}"
