@@ -39,7 +39,7 @@ message TorrentStatus {
     string Eta = 4;
     string Up = 5;
     string Down = 6;
-    string Result = 7;
+    string Ratio = 7;
     string Status = 8;
     string Name = 9;
 }
