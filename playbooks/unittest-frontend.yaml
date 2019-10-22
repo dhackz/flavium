@@ -2,6 +2,6 @@
   roles:
     - role: build-dashboard
       workdir: "{{ zuul.project.src_dir }}/flavium-dashboard"
-    - role: npm test
+    - role: frontend-test
       workdir: "{{ zuul.project.src_dir }}/flavium-dashboard"
       testdir: "./src/..."
