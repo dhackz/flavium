@@ -2,8 +2,10 @@
     check:
       jobs:
         - build-dashboard
+        - build-backend
         - unittest-backend
     gate:
       jobs:
         - build-dashboard
+        - build-backend
         - unittest-backend
