@@ -29,12 +29,14 @@ const Item = ({showList, download, setIsListExpanded, setIndexOfExpanded, isExpa
         setStatus(download.Status);
       }
     }
-
-    const albinsBetterRegex = /^(([a-zA-Z]+) +(& +)?)+/;
-    let stringVal = download.Name
-    stringVal = stringVal.replace(/\./g,' ')
-    stringVal = stringVal.match(albinsBetterRegex)[0];
-    fetchDataFromName(stringVal)
+    
+    if(download.Name !== undefined){
+      const albinsBetterRegex = /^(([a-zA-Z]+) +(& +)?)+/;
+      let stringVal = download.Name
+      stringVal = stringVal.replace(/\./g,' ')
+      stringVal = stringVal.match(albinsBetterRegex)[0];
+      fetchDataFromName(stringVal)
+    }
     
   }, [download])
 
@@ -63,12 +65,14 @@ const Item = ({showList, download, setIsListExpanded, setIndexOfExpanded, isExpa
 
   let details = null;
   const handleClick = () => {
-    if(!isExpanded){
-      setIsListExpanded(true)
-      setIndexOfExpanded(index)
-    }else{
-      setIsListExpanded(false);
-      setIndexOfExpanded(null)
+    if(!showList){
+      if(!isExpanded){
+        setIsListExpanded(true)
+        setIndexOfExpanded(index)
+      }else{
+        setIsListExpanded(false);
+        setIndexOfExpanded(null)
+      }
     }
   }
   if(isExpanded){
@@ -91,7 +95,7 @@ const Item = ({showList, download, setIsListExpanded, setIndexOfExpanded, isExpa
         </ItemContainer>
           {details}
       </ItemStyle>
-          </>
+    </>
   );
 };
 

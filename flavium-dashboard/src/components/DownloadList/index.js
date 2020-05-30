@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { ListStyle, LargeText, Header} from "./styles"
+import { ListStyle, LargeText, Header, Container} from "./styles"
 import Item from "./Item"
 import ItemColumns from "./ItemColumns"
 import Toggle from "./Toggle"
@@ -35,11 +35,10 @@ const DownloadList = ({postListener}) => {
   }
 
   return (
-    <div>
+    <Container>
       <Header>
-        <LargeText>Currently downloading:</LargeText>
-          <StyledButton onClick={fetchData}>Reload</StyledButton>
-        <Toggle setShowList={setShowList} showList={showList}/>
+        <LargeText>Currently downloading:</LargeText> 
+        <Toggle setShowList={setShowList} showList={showList} setIsListExpanded={setIsListExpanded}/>
       </Header>
       {itemColumns}
       {currentDownloads && <ListStyle showList={showList}>
@@ -61,7 +60,7 @@ const DownloadList = ({postListener}) => {
               );
             })}
       </ListStyle>}
-    </div>
+    </Container>
   )
 };
 

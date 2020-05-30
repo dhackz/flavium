@@ -2,14 +2,17 @@ import styled from "styled-components"
 
 export const ListStyle = styled.div`
     padding: ${props => props.showList ? "0" : "20px"};
-    background-image: linear-gradient(to bottom right, #3f4a4a, #47392f);
     display: ${props => props.showList ? "block" : "grid"};
     grid-template-columns: ${props => props.showList ? "25% 25% 25% 25%" : "repeat(auto-fill, minmax(20px, 200px))"};
     grid-column-gap: 20px;
     grid-row-gap: 20px;
-    
+
 `;
 
+export const Container = styled.div`
+    background-image: linear-gradient(to bottom right, #3f4a4a, #47392f); 
+    min-height: 1000px;
+`;
 export const Header = styled.div`
     text-align: right;
     width: 100%;

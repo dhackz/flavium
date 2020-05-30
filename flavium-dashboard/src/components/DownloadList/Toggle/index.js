@@ -1,13 +1,15 @@
 import React from 'react';
 import {ToggleBtn, ToggleStyle, Image} from "./styles";
 
-const Toggle = ({setShowList, showList}) => {
+const Toggle = ({setShowList, showList, setIsListExpanded}) => {
 
     const listClick = () => {
         setShowList(true);
+        setIsListExpanded(false);
       };
     const cardClick = () => {
         setShowList(false);
+        setIsListExpanded(true);
     };
 
     return (

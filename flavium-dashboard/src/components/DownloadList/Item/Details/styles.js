@@ -5,7 +5,7 @@ export const DetailsStyle = styled.div`
     top: auto;
     left: 0;
     width: 100%;
-    background-color: rgba(0,0,0, 0.34);
+    background-color: rgba(0,0,0, 0.5);
     margin-top: 10px; 
 `;
 
