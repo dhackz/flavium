@@ -1,0 +1,8 @@
+{
+    "plugins": [
+      "@babel/plugin-transform-flow-strip-types",
+      "@babel/plugin-transform-template-literals",
+      ["@babel/plugin-transform-destructuring", { "loose": true }]
+    ],
+    "sourceType": "unambiguous"
+  }

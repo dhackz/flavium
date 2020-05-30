@@ -11,7 +11,7 @@ const Item = ({showList, download, setIsListExpanded, setIndexOfExpanded, isExpa
       setName(stringVal)
       const api_call = await fetch("https://api.themoviedb.org/3/search/movie?api_key="+ process.env.REACT_APP_MOVIE_KEY +"&query="+(stringVal.replace(/ /g,"%20")));
       const data = await api_call.json();
-      if(data.results.length>0){
+      if(data.results && data.results[0]){
         setId(data.results[0].id)
         const api_call2 = await fetch("https://api.themoviedb.org/3/movie/"+data.results[0].id+"?api_key="+process.env.REACT_APP_MOVIE_KEY);
         const data2 = await api_call2.json();
@@ -58,7 +58,9 @@ const Item = ({showList, download, setIsListExpanded, setIndexOfExpanded, isExpa
   const getTrailerLink = async(movieId) => {
     const api_call = await fetch("http://api.themoviedb.org/3/movie/"+movieId+"/videos?api_key="+process.env.REACT_APP_MOVIE_KEY)
     const data = await api_call.json();
-    setYoutubeId(data.results[0].key)
+    if(data.results[0]){
+      setYoutubeId(data.results[0].key)
+    }
   }
 
   let details = null;

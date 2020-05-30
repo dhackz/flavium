@@ -1,0 +1,4 @@
+- name: Run frontend unittests
+  command: npm test
+  args:
+    chdir: "{{ workdir }}"

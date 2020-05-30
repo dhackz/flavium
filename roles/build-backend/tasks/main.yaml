@@ -1,3 +1,10 @@
 - name: Build flavium backend
   make:
     chdir: "{{ workdir }}"
+  when: make_target is not defined
+
+- name: "Build flavium backend target: {{ make_target }}"
+  make:
+    target: "{{ make_target }}"
+    chdir: "{{ workdir }}"
+  when: make_target is defined

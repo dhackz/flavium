@@ -1,0 +1,7 @@
+- hosts: all
+  roles:
+    - role: build-dashboard
+      workdir: "{{ zuul.project.src_dir }}/flavium-dashboard"
+    - role: frontend-test
+      workdir: "{{ zuul.project.src_dir }}/flavium-dashboard"
+      testdir: "./src/..."
